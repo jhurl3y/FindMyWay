@@ -22,10 +22,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.location.LocationServices;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener,
                 ConnectionCallbacks, OnConnectionFailedListener {
@@ -94,28 +92,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void updateMap() {
         LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        startMarker.setPosition(latLng);
 
-//        CameraPosition cameraPosition = new CameraPosition.Builder()
-//                .target(latLng) // Sets the center of the map to current location
-//                .zoom(17)                   // Sets the zoom
-//                .bearing(90)                // Sets the orientation of the camera to east
-//                .tilt(30)                   // Sets the tilt of the camera to 30 degrees
-//                .build();                   // Creates a CameraPosition from the builder
-//        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-    }
-
-    protected void addInitialMarker(){
-        LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        startMarker = googleMap.addMarker(new MarkerOptions().position(latLng).title("You are here"));
-        CameraPosition cameraPosition = new CameraPosition.Builder()
+        if (startMarker != null) {
+            startMarker.setPosition(latLng);
+        }
+        else{
+            startMarker = googleMap.addMarker(new MarkerOptions().position(latLng).title("You are here"));
+            CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(latLng) // Sets the center of the map to current location
                     .zoom(17)                   // Sets the zoom
                     .bearing(90)                // Sets the orientation of the camera to east
                     .tilt(30)                   // Sets the tilt of the camera to 30 degrees
                     .build();                   // Creates a CameraPosition from the builder
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        }
     }
+
     /**
      * Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
      */
@@ -159,7 +151,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // in rare cases when a location is not available.
         currentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (currentLocation != null) {
-            addInitialMarker();
+            updateMap();
             startLocationUpdates();
         } else {
             Toast.makeText(this, R.string.common_google_play_services_unknown_issue, Toast.LENGTH_LONG).show();
