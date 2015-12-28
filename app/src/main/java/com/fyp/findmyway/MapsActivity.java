@@ -5,11 +5,13 @@ import android.content.Context;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -75,6 +77,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
         Button button = (Button)findViewById(R.id.dst);
         button.setTypeface(font);
+
+    }
+
+    public void sendMessage(View view) {
+        Intent intent = new Intent(this, DirectionsActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     protected void createLocationRequest() {
@@ -102,11 +111,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if (startMarker != null) {
             startMarker.setPosition(latLng);
-        }
-        else{
+        } else {
             startMarker = googleMap.addMarker(new MarkerOptions().position(latLng)
                                                                  .title("Current Location")
-                                                                 .icon(BitmapDescriptorFactory.fromResource( R.drawable.ic_location )));  // defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+                                                                 .icon(BitmapDescriptorFactory.fromResource( R.drawable.ic_location ))); // defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(latLng) // Sets the center of the map to current location
                     .zoom(17)                   // Sets the zoom

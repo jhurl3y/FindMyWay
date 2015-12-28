@@ -16,6 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/fa_rocket"
+        android:onClick="sendMessage"
         android:textColor="@drawable/destination_button_text"
         android:textSize="50sp"
         android:id="@+id/dst"
