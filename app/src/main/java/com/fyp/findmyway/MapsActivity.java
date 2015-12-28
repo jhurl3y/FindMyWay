@@ -7,7 +7,6 @@ import com.google.android.gms.location.LocationListener;
 
 import android.graphics.Typeface;
 import android.location.Location;
-import android.os.Parcelable;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -107,7 +106,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         else{
             startMarker = googleMap.addMarker(new MarkerOptions().position(latLng)
                                                                  .title("Current Location")
-                                                                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+                                                                 .icon(BitmapDescriptorFactory.fromResource( R.drawable.ic_location )));  // defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(latLng) // Sets the center of the map to current location
                     .zoom(17)                   // Sets the zoom
@@ -182,7 +181,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.i(TAG, "Connection suspended");
         mGoogleApiClient.connect();
     }
-
 
     @Override
     protected void onStart() {
