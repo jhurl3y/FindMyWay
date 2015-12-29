@@ -1,7 +1,6 @@
-package com.fyp.findmyway;
+package com.fyp.findmyway.activities;
 
-import android.content.Context;
-
+import com.fyp.findmyway.R;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 
