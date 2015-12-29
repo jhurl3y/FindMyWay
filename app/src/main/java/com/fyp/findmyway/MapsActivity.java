@@ -80,10 +80,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    // Start Directions Activity + send current location
     public void sendMessage(View view) {
         Intent intent = new Intent(this, DirectionsActivity.class);
+        Bundle extras = new Bundle();
+        extras.putDouble("long", currentLocation.getLongitude());
+        extras.putDouble("lat", currentLocation.getLatitude());
+
+        intent.putExtras(extras);
         startActivity(intent);
-        finish();
+        // finish();
     }
 
     protected void createLocationRequest() {
