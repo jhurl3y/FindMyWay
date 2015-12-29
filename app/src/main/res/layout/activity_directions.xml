@@ -80,6 +80,7 @@ tools:context="com.fyp.findmyway.activities.DirectionsActivity">
             android:layout_height="fill_parent"
             android:layout_weight="0.5"
             android:background="@drawable/standard_buttons"
+            android:onClick="onBtnClicked"
             android:text="Back"
             />
 
@@ -88,6 +89,7 @@ tools:context="com.fyp.findmyway.activities.DirectionsActivity">
             android:layout_height="fill_parent"
             android:layout_weight="0.5"
             android:background="@drawable/standard_buttons"
+            android:onClick="onBtnClicked"
             android:text="OK"
             />
 

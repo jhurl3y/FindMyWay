@@ -1,15 +1,20 @@
 package com.fyp.findmyway.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.test.suitebuilder.annotation.LargeTest;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.fyp.findmyway.R;
 import com.fyp.findmyway.services.UtilityService;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -24,7 +29,6 @@ public class DirectionsActivity extends FragmentActivity implements OnMapReadyCa
 
     protected GoogleMap googleMap;
     protected Marker curr;
-    protected Marker dest;
 
     @Override
     protected void onCreate (Bundle savedInstanceState){
@@ -58,6 +62,25 @@ public class DirectionsActivity extends FragmentActivity implements OnMapReadyCa
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onBtnClicked(View v){
+        if (v.getId() == R.id.dst_back) {
+            finish();
+        }
+
+        if (v.getId() == R.id.dst_ok) {
+            LatLng centre = UtilityService.calcLatLngOffset(googleMap.getCameraPosition().target, 0.0, 20.0);
+            
+            Intent output = new Intent();
+            Bundle extras = new Bundle();
+            extras.putDouble("long", centre.longitude);
+            extras.putDouble("lat", centre.latitude);
+            output.putExtras(extras);
+            setResult(RESULT_OK, output);
+            finish();
+        }
+
     }
 
     @Override

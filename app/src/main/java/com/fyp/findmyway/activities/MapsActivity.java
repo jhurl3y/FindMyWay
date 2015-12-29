@@ -4,6 +4,7 @@ import com.fyp.findmyway.R;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.location.Location;
@@ -65,6 +66,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     protected Marker startMarker;
 
+    protected Marker endMarker;
+
     @Override
     protected void onCreate (Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -87,8 +90,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         extras.putDouble("lat", currentLocation.getLatitude());
 
         intent.putExtras(extras);
-        startActivity(intent);
-        // finish();
+        startActivityForResult(intent, 2);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 2 && resultCode == RESULT_OK && data != null) {
+            Bundle extras = data.getExtras();
+            LatLng pos =  new LatLng(extras.getDouble("lat"), extras.getDouble("long"));
+
+            if (endMarker != null) {
+                endMarker.setPosition(pos);
+            } else {
+                endMarker = googleMap.addMarker(new MarkerOptions().position(pos)
+                                     .title("Destination")
+                                     .icon(BitmapDescriptorFactory.defaultMarker()));
+            }
+
+        }
     }
 
     protected void createLocationRequest() {
@@ -118,8 +139,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             startMarker.setPosition(latLng);
         } else {
             startMarker = googleMap.addMarker(new MarkerOptions().position(latLng)
-                                                                 .title("Current Location")
-                                                                 .icon(BitmapDescriptorFactory.fromResource( R.drawable.ic_location ))); // defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                                                                 .title("You are here!")
+                                                                 .icon(BitmapDescriptorFactory.fromResource( R.drawable.ic_location )));
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(latLng) // Sets the center of the map to current location
                     .zoom(17)                   // Sets the zoom
