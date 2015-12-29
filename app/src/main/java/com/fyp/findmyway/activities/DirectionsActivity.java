@@ -72,8 +72,8 @@ public class DirectionsActivity extends FragmentActivity implements OnMapReadyCa
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_location)));
 
             LatLng offset_loc = UtilityService.calcLatLngOffset(current_position, 40.0, 40.0);
-            dest = googleMap.addMarker(new MarkerOptions().position(offset_loc)
-                    .icon(BitmapDescriptorFactory.defaultMarker()));
+//            dest = googleMap.addMarker(new MarkerOptions().position(offset_loc)
+//                    .icon(BitmapDescriptorFactory.defaultMarker()));
 
             LatLng camera_pos = UtilityService.calcLatLngOffset(offset_loc, 0.0, -20.0);
             CameraPosition cameraPosition = new CameraPosition.Builder()
