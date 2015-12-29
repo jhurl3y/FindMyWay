@@ -25,6 +25,25 @@ tools:context="com.fyp.findmyway.activities.DirectionsActivity">
     android:layout_height="match_parent" android:id="@+id/map" tools:context="com.fyp.findmyway.activities.DirectionsActivity"
     android:name="com.google.android.gms.maps.SupportMapFragment" />
 
+    <TextView
+        android:id="@+id/dst_choose"
+        android:background="@android:color/holo_blue_dark"
+        android:text="@string/dst_choose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_alignParentTop="true" />
+
+    <TextView
+        android:id="@+id/dst_instructions"
+        android:background="@android:color/holo_blue_dark"
+        android:text="@string/dst_instructions"
+        android:layout_below="@id/dst_choose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/textAppearanceMedium"
+        />
+
     <ImageView android:id="@+id/dst_marker"
         android:background="@android:color/transparent"
         android:layout_width="wrap_content"

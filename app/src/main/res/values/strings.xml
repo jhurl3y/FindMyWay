@@ -6,4 +6,6 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="dst_choose">Choose Destination!</string>
+    <string name="dst_instructions">Pan and zoom map under black pin..</string>
 </resources>
