@@ -15,14 +15,23 @@
         android:background = "@drawable/destination_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/fa_rocket"
-        android:onClick="sendMessage"
-        android:textColor="@drawable/destination_button_text"
-        android:textSize="50sp"
         android:id="@+id/dst"
+        android:onClick="onBtnClicked"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="15dp"
+        android:layout_marginRight="10dp"
+        android:minHeight="60dip"
+        android:minWidth="60dip"/>
+
+    <Button
+        android:background = "@drawable/current_location_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/return_location"
+        android:onClick="onBtnClicked"
+        android:layout_above="@id/dst"
+        android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"
         android:minHeight="60dip"
         android:minWidth="60dip"/>

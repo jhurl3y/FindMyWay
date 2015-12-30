@@ -79,18 +79,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
         Button button = (Button)findViewById(R.id.dst);
         button.setTypeface(font);
-
     }
 
-    // Start Directions Activity + send current location
-    public void sendMessage(View view) {
-        Intent intent = new Intent(this, DirectionsActivity.class);
-        Bundle extras = new Bundle();
-        extras.putDouble("long", currentLocation.getLongitude());
-        extras.putDouble("lat", currentLocation.getLatitude());
+    public void onBtnClicked(View view){
+        if (view.getId() == R.id.dst) {
+            Intent intent = new Intent(this, DirectionsActivity.class);
+            Bundle extras = new Bundle();
+            extras.putDouble("long", currentLocation.getLongitude());
+            extras.putDouble("lat", currentLocation.getLatitude());
 
-        intent.putExtras(extras);
-        startActivityForResult(intent, 2);
+            intent.putExtras(extras);
+            startActivityForResult(intent, 2);
+        }
+
+        if (view.getId() == R.id.return_location) {
+            googleMap.animateCamera(CameraUpdateFactory.newLatLng(new
+                        LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())));
+        }
+
     }
 
     @Override
