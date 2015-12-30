@@ -133,17 +133,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onMapClick(LatLng point) {
+                View main_bar = findViewById(R.id.main_bar);
+                View dst = findViewById(R.id.dst);
+                View return_location = findViewById(R.id.return_location);
+
                 if (showButtons){
-                    // findViewById(R.id.main_bar).animate().translationX(findViewById(R.id.action_bar).getWidth()).alpha(1.0f);
-                    findViewById(R.id.main_bar).animate().alpha(1.0f);
-                    findViewById(R.id.dst).animate().alpha(1.0f);
-                    findViewById(R.id.return_location).animate().alpha(1.0f);
+                    main_bar.setVisibility(main_bar.VISIBLE);
+                    main_bar.animate().translationY(0);
+                    dst.animate().alpha(1.0f);
+                    return_location.animate().alpha(1.0f);
                     showButtons = !showButtons;
                 } else {
-                    // findViewById(R.id.main_bar).animate().translationX(findViewById(R.id.action_bar).getWidth()).alpha(0.0f);
-                    findViewById(R.id.main_bar).animate().alpha(1.0f);
-                    findViewById(R.id.dst).animate().alpha(0.0f);
-                    findViewById(R.id.return_location).animate().alpha(0.0f);
+                    main_bar.setVisibility(main_bar.VISIBLE);
+                    main_bar.animate().translationY(-main_bar.getHeight()*2);
+                    dst.animate().alpha(0.0f);
+                    return_location.animate().alpha(0.0f);
                     showButtons = !showButtons;
                 }
             }
