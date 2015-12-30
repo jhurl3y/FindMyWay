@@ -11,6 +11,63 @@
         android:layout_height="match_parent" android:id="@+id/map" tools:context=".MapsActivity"
         android:name="com.google.android.gms.maps.SupportMapFragment" />
 
+    <LinearLayout
+        android:id="@+id/main_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:orientation="horizontal"
+        android:background="@drawable/action_bar_shape">
+
+        <Button
+            android:id="@+id/settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="false"
+            android:layout_weight="0.5"
+            android:background = "@drawable/ic_settings"
+            android:minHeight="50dip"
+            android:minWidth="50dip"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            />
+
+        <Button
+            android:id="@+id/manual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="false"
+            android:layout_weight="0.5"
+            android:background = "@drawable/ic_manual"
+            android:minHeight="50dip"
+            android:minWidth="50dip"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            />
+
+        <Button
+            android:id="@+id/bluetooth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="false"
+            android:layout_weight="0.5"
+            android:background = "@drawable/ic_bluetooth"
+            android:minHeight="50dip"
+            android:minWidth="50dip"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            />
+    </LinearLayout>
+
     <Button
         android:background = "@drawable/destination_button"
         android:layout_width="wrap_content"

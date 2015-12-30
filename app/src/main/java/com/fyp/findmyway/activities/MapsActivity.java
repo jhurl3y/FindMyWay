@@ -134,10 +134,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onMapClick(LatLng point) {
                 if (showButtons){
+                    // findViewById(R.id.main_bar).animate().translationX(findViewById(R.id.action_bar).getWidth()).alpha(1.0f);
+                    findViewById(R.id.main_bar).animate().alpha(1.0f);
                     findViewById(R.id.dst).animate().alpha(1.0f);
                     findViewById(R.id.return_location).animate().alpha(1.0f);
                     showButtons = !showButtons;
                 } else {
+                    // findViewById(R.id.main_bar).animate().translationX(findViewById(R.id.action_bar).getWidth()).alpha(0.0f);
+                    findViewById(R.id.main_bar).animate().alpha(1.0f);
                     findViewById(R.id.dst).animate().alpha(0.0f);
                     findViewById(R.id.return_location).animate().alpha(0.0f);
                     showButtons = !showButtons;
