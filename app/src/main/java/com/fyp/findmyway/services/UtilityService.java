@@ -10,7 +10,6 @@ import android.widget.RelativeLayout;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
- * Created by james on 29/12/15.
  * A Utility Service for doing various calculations
  * and background operations.
  */

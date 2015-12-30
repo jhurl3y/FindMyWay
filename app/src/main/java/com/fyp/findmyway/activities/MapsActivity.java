@@ -5,6 +5,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.location.Location;
@@ -41,7 +42,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
             UPDATE_INTERVAL_IN_MILLISECONDS / 2;
 
-//    // Keys for storing activity state in the Bundle.
+//    Keys for storing activity state in the Bundle.
 //    protected final static String LOCATION_KEY = "location-key";
 //    protected final static String START_MARKER_KEY = "start-marker-key";
 
@@ -68,6 +69,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     protected Marker endMarker;
 
+    protected Boolean showButtons;
+
     @Override
     protected void onCreate (Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -76,9 +79,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         buildGoogleApiClient();
-        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
-        Button button = (Button)findViewById(R.id.dst);
-        button.setTypeface(font);
+        showButtons = false;
     }
 
     public void onBtnClicked(View view){
@@ -94,9 +95,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if (view.getId() == R.id.return_location) {
             googleMap.animateCamera(CameraUpdateFactory.newLatLng(new
-                        LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())));
+                    LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())));
         }
-
     }
 
     @Override
@@ -129,6 +129,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
+        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+
+            @Override
+            public void onMapClick(LatLng point) {
+                if (showButtons){
+                    findViewById(R.id.dst).animate().alpha(1.0f);
+                    findViewById(R.id.return_location).animate().alpha(1.0f);
+                    showButtons = !showButtons;
+                } else {
+                    findViewById(R.id.dst).animate().alpha(0.0f);
+                    findViewById(R.id.return_location).animate().alpha(0.0f);
+                    showButtons = !showButtons;
+                }
+            }
+        });
         googleMap.setOnMarkerClickListener(this);
     }
 
