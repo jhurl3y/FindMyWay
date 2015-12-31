@@ -93,6 +93,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             googleMap.animateCamera(CameraUpdateFactory.newLatLng(new
                     LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())));
         }
+
+        if (view.getId() == R.id.bluetooth) {
+            Intent serverIntent = new Intent(this, BluetoothActivity.class);
+            startActivityForResult(serverIntent, 1);
+        }
     }
 
     @Override
