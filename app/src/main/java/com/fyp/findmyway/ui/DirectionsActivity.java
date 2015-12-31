@@ -1,20 +1,14 @@
-package com.fyp.findmyway.activities;
+package com.fyp.findmyway.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.test.suitebuilder.annotation.LargeTest;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.fyp.findmyway.R;
-import com.fyp.findmyway.services.UtilityService;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -39,7 +33,7 @@ public class DirectionsActivity extends FragmentActivity implements OnMapReadyCa
         mapFragment.getMapAsync(this);
 
         ImageView view1 = (ImageView) findViewById(R.id.dst_marker);
-        UtilityService.scaleImage(view1, 160);
+        Calculations.scaleImage(view1, 160);
     }
 
     @Override
@@ -70,7 +64,7 @@ public class DirectionsActivity extends FragmentActivity implements OnMapReadyCa
         }
 
         if (v.getId() == R.id.dst_ok) {
-            LatLng centre = UtilityService.calcLatLngOffset(googleMap.getCameraPosition().target, 0.0, 20.0);
+            LatLng centre = Calculations.calcLatLngOffset(googleMap.getCameraPosition().target, 0.0, 20.0);
             
             Intent output = new Intent();
             Bundle extras = new Bundle();
@@ -94,11 +88,11 @@ public class DirectionsActivity extends FragmentActivity implements OnMapReadyCa
             curr = googleMap.addMarker(new MarkerOptions().position(current_position)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_location)));
 
-            LatLng offset_loc = UtilityService.calcLatLngOffset(current_position, 40.0, 40.0);
+            LatLng offset_loc = Calculations.calcLatLngOffset(current_position, 40.0, 40.0);
 //            dest = googleMap.addMarker(new MarkerOptions().position(offset_loc)
 //                    .icon(BitmapDescriptorFactory.defaultMarker()));
 
-            LatLng camera_pos = UtilityService.calcLatLngOffset(offset_loc, 0.0, -20.0);
+            LatLng camera_pos = Calculations.calcLatLngOffset(offset_loc, 0.0, -20.0);
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(camera_pos) // Sets the center of the map
                     .zoom(17)                   // Sets the zoom

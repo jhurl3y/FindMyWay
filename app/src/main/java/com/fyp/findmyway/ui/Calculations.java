@@ -1,4 +1,4 @@
-package com.fyp.findmyway.services;
+package com.fyp.findmyway.ui;
 
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -13,7 +13,7 @@ import com.google.android.gms.maps.model.LatLng;
  * A Utility Service for doing various calculations
  * and background operations.
  */
-public class UtilityService {
+public class Calculations {
 
     /**
      * Offsets a location in metres

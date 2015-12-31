@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
     <!--
  The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but are recommended.
@@ -26,7 +27,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".activities.MapsActivity"
+            android:name=".ui.MapsActivity"
             android:label="FindMyWay" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,12 +36,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.DirectionsActivity"
+            android:name=".ui.DirectionsActivity"
             android:label="@string/title_activity_directions"
-            android:parentActivityName=".activities.MapsActivity" >
+            android:parentActivityName=".ui.MapsActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MapsActivity" />
+                android:value=".ui.MapsActivity" />
         </activity>
     </application>
 

@@ -1,22 +1,15 @@
-package com.fyp.findmyway.activities;
+package com.fyp.findmyway.ui;
 
 import com.fyp.findmyway.R;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.LocationRequest;
@@ -83,7 +76,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         buildGoogleApiClient();
         showButtons = false;
-        setupButtons();
     }
 
     public void onBtnClicked(View view){
@@ -101,37 +93,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             googleMap.animateCamera(CameraUpdateFactory.newLatLng(new
                     LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())));
         }
-    }
-
-    public void setupButtons(){
-//        Button settings = (Button)findViewById(R.id.settings);
-//        Button manual = (Button)findViewById(R.id.manual);
-//        Button bluetooth = (Button)findViewById(R.id.bluetooth);
-//
-//        View.OnTouchListener t = new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//
-//                if (event.getAction() == MotionEvent.ACTION_DOWN ) {
-//                    int color = Color.parseColor("#0000FF");
-//                    Button b = (Button) v;
-//                    b.setBackgroundColor(color);
-//                    return true;
-//                }
-//
-//                if (event.getAction() == MotionEvent.ACTION_UP ) {
-//                    int color = Color.parseColor("#FFFFFF");
-//                    Button b = (Button) v;
-//                    b.setBackgroundColor(color);
-//                    return true;
-//                }
-//                return false;
-//            }
-//        };
-//
-//        settings.setOnTouchListener(t);
-//        manual.setOnTouchListener(t);
-//        bluetooth.setOnTouchListener(t);
     }
 
     @Override
