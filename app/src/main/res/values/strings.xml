@@ -18,5 +18,21 @@
     <string name="title_paired_devices">Paired Devices</string>
     <string name="title_other_devices">Other Available Devices</string>
     <string name="button_scan">Scan for devices</string>
+    <string name="title_activity_manual_control">ManualControlActivity</string>
+
+    <!--  ManualControlActivity -->
+    <string name="front_lab">FRONT</string>
+    <string name="front_right_lab">FRONT_RIGHT</string>
+    <string name="right_lab">RIGHT</string>
+    <string name="right_bottom_lab">BOTTOM_RIGHT</string>
+    <string name="bottom_lab">BOTTOM</string>
+    <string name="bottom_left_lab">BOTTOM_LEFT</string>
+    <string name="left_lab">LEFT</string>
+    <string name="left_front_lab">FRONT_LEFT</string>
+    <string name="center_lab">CENTER</string>
+
+
+
+
 </resources>
 

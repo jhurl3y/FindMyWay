@@ -22,20 +22,20 @@
         android:orientation="horizontal"
         android:background="@drawable/action_bar_shape">
 
-        <Button
-            android:id="@+id/settings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="false"
-            android:layout_weight="0.5"
-            android:background = "@drawable/settings_drawable"
-            android:minHeight="50dip"
-            android:minWidth="50dip"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            />
+        <!--<Button-->
+            <!--android:id="@+id/settings"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentTop="false"-->
+            <!--android:layout_weight="0.5"-->
+            <!--android:background = "@drawable/settings_drawable"-->
+            <!--android:minHeight="50dip"-->
+            <!--android:minWidth="50dip"-->
+            <!--android:layout_marginBottom="5dp"-->
+            <!--android:layout_marginTop="5dp"-->
+            <!--android:layout_marginLeft="5dp"-->
+            <!--android:layout_marginRight="5dp"-->
+            <!--/>-->
 
         <Button
             android:id="@+id/manual"
@@ -43,6 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="false"
             android:layout_weight="0.5"
+            android:onClick="onBtnClicked"
             android:background = "@drawable/manual_drawable"
             android:minHeight="50dip"
             android:minWidth="50dip"

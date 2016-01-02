@@ -98,6 +98,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Intent serverIntent = new Intent(this, BluetoothActivity.class);
             startActivityForResult(serverIntent, 1);
         }
+
+        if (view.getId() == R.id.manual) {
+            Intent intent = new Intent(this, ManualControlActivity.class);
+            startActivityForResult(intent, 1);
+        }
     }
 
     @Override
