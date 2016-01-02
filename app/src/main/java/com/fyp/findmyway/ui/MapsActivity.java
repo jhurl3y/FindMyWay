@@ -1,10 +1,14 @@
 package com.fyp.findmyway.ui;
 
+import com.directions.route.Route;
+import com.directions.route.Routing;
+import com.directions.route.RoutingListener;
 import com.fyp.findmyway.R;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -26,9 +30,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.ArrayList;
+
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener,
-                ConnectionCallbacks, OnConnectionFailedListener, GoogleMap.OnMarkerClickListener{
+                ConnectionCallbacks, OnConnectionFailedListener, GoogleMap.OnMarkerClickListener, RoutingListener {
 
     protected static final String TAG = "MainActivity";
     // The desired interval for location updates. Inexact. Updates may be more or less frequent.
@@ -67,6 +76,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     protected Boolean showButtons;
 
+    private ArrayList<Polyline> polylines;
+
     @Override
     protected void onCreate (Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -76,6 +87,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         buildGoogleApiClient();
         showButtons = false;
+        polylines = new ArrayList<>();
     }
 
     public void onBtnClicked(View view){
@@ -121,7 +133,53 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                      .icon(BitmapDescriptorFactory.defaultMarker()));
             }
 
+            Routing routing = new Routing.Builder()
+                    .travelMode(Routing.TravelMode.WALKING)
+                    .withListener(this)
+                    .waypoints(startMarker.getPosition(), endMarker.getPosition())
+                    .build();
+            routing.execute();
+
         }
+    }
+
+    @Override
+    public void onRoutingStart() {
+        // The Routing Request starts
+        if (polylines.size()>0) {
+            for (Polyline poly : polylines) {
+                poly.remove();
+            }
+        }
+
+        polylines = new ArrayList<>();
+    }
+
+    @Override
+    public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex)
+    {
+        //add route(s) to the map.
+        for (int i = 0; i < route.size(); i++) {
+
+            PolylineOptions polyOptions = new PolylineOptions();
+            polyOptions.color(Color.BLUE);
+            polyOptions.width(10);
+            polyOptions.addAll(route.get(i).getPoints());
+            Polyline polyline = googleMap.addPolyline(polyOptions);
+            polylines.add(polyline);
+
+            Toast.makeText(getApplicationContext(),"Distance - " + route.get(i).getDistanceValue()+ " Duration - " + route.get(i).getDurationValue(),Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onRoutingFailure() {
+        Toast.makeText(this,"Something went wrong, Try again", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRoutingCancelled() {
+
     }
 
     protected void createLocationRequest() {
