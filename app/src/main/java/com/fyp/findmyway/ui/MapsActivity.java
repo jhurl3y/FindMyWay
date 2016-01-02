@@ -1,5 +1,6 @@
 package com.fyp.findmyway.ui;
 
+import android.app.ProgressDialog;
 import com.directions.route.Route;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
@@ -78,6 +79,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private ArrayList<Polyline> polylines;
 
+    private ProgressDialog progressDialog;
+
+    private LatLng destPos;
+
     @Override
     protected void onCreate (Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -123,23 +128,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if (requestCode == 2 && resultCode == RESULT_OK && data != null) {
             Bundle extras = data.getExtras();
-            LatLng pos =  new LatLng(extras.getDouble("lat"), extras.getDouble("long"));
+            destPos =  new LatLng(extras.getDouble("lat"), extras.getDouble("long"));
 
             if (endMarker != null) {
-                endMarker.setPosition(pos);
-            } else {
-                endMarker = googleMap.addMarker(new MarkerOptions().position(pos)
-                                     .title("Destination")
-                                     .icon(BitmapDescriptorFactory.defaultMarker()));
+                endMarker.remove();
             }
 
+            progressDialog = ProgressDialog.show(this, "Please wait.",
+                    "Fetching route information.", true);
             Routing routing = new Routing.Builder()
                     .travelMode(Routing.TravelMode.WALKING)
                     .withListener(this)
-                    .waypoints(startMarker.getPosition(), endMarker.getPosition())
+                    .waypoints(startMarker.getPosition(), destPos)
                     .build();
             routing.execute();
-
         }
     }
 
@@ -151,29 +153,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 poly.remove();
             }
         }
-
         polylines = new ArrayList<>();
     }
 
     @Override
     public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex)
     {
+        progressDialog.dismiss();
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())) // Sets the center of the map to current location
+                .zoom(17)                   // Sets the zoom
+                .bearing(90)                // Sets the orientation of the camera to east
+                .tilt(30)                   // Sets the tilt of the camera to 30 degrees
+                .build();                   // Creates a CameraPosition from the builder
+        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         //add route(s) to the map.
-        for (int i = 0; i < route.size(); i++) {
 
+        if (route.isEmpty()) {
+            Toast.makeText(this,"Could not find a route, try again", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        for (int i = 0; i < route.size(); i++) {
             PolylineOptions polyOptions = new PolylineOptions();
             polyOptions.color(Color.BLUE);
             polyOptions.width(10);
             polyOptions.addAll(route.get(i).getPoints());
             Polyline polyline = googleMap.addPolyline(polyOptions);
             polylines.add(polyline);
-
-            Toast.makeText(getApplicationContext(),"Distance - " + route.get(i).getDistanceValue()+ " Duration - " + route.get(i).getDurationValue(),Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Distance: " + route.get(i).getDistanceText() + " Duration: " + route.get(i).getDurationText(), Toast.LENGTH_LONG).show();
         }
+
+        endMarker = googleMap.addMarker(new MarkerOptions().position(destPos)
+                .title("Destination")
+                .icon(BitmapDescriptorFactory.defaultMarker()));
     }
 
     @Override
     public void onRoutingFailure() {
+        // The Routing request failed
+        progressDialog.dismiss();
         Toast.makeText(this,"Something went wrong, Try again", Toast.LENGTH_SHORT).show();
     }
 
