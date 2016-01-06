@@ -70,6 +70,18 @@
             />
     </LinearLayout>
 
+    <TextView android:id="@+id/connection_status"
+        android:text="Not Connected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:paddingRight="5dp"
+        android:paddingTop="5dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        style="?android:attr/textAppearanceMedium"
+        />
+
     <Button
         android:background = "@drawable/destination_button"
         android:layout_width="wrap_content"
@@ -94,4 +106,5 @@
         android:layout_marginRight="10dp"
         android:minHeight="60dip"
         android:minWidth="60dip"/>
+
 </RelativeLayout>

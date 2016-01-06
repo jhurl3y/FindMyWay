@@ -5,16 +5,23 @@ import com.directions.route.Route;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.fyp.findmyway.R;
+import com.fyp.findmyway.services.Constants;
+import com.fyp.findmyway.services.DataTransmissionService;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.LocationRequest;
@@ -82,10 +89,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private ArrayList<Polyline> polylines;
     private ArrayList<Circle> circles;
-
     private ProgressDialog progressDialog;
-
     private LatLng destPos;
+
+    // Intent request codes
+    private static final int MANUAL_CODE = 1;
+    private static final int DESTINATON_CODE = 2;
+    private static final int BlUETOOTH_CODE = 3;
+    private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
+    private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
+    private static final int REQUEST_ENABLE_BT = 3;
+
+    /**
+     * String buffer for outgoing messages
+     */
+    private StringBuffer mOutStringBuffer;
+
+    /**
+     * Local Bluetooth adapter
+     */
+    private BluetoothAdapter mBluetoothAdapter = null;
+
+    /**
+     * Member object for the chat services
+     */
+    private DataTransmissionService dtService = null;
+    /**
+     * Name of the connected device
+     */
+    private String mConnectedDeviceName = null;
+
+    TextView connectionStatus = null;
 
     @Override
     protected void onCreate (Bundle savedInstanceState){
@@ -98,56 +132,153 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         showButtons = false;
         polylines = new ArrayList<>();
         circles = new ArrayList<>();
+        connectionStatus = (TextView) findViewById(R.id.connection_status);
     }
 
-    public void onBtnClicked(View view){
-        if (view.getId() == R.id.dst) {
-            Intent intent = new Intent(this, DirectionsActivity.class);
-            Bundle extras = new Bundle();
-            extras.putDouble("long", currentLocation.getLongitude());
-            extras.putDouble("lat", currentLocation.getLatitude());
+    public void onBtnClicked(View view) {
 
-            intent.putExtras(extras);
-            startActivityForResult(intent, 2);
-        }
+        switch (view.getId()) {
+            case R.id.dst:
+                Intent intent = new Intent(this, DirectionsActivity.class);
+                Bundle extras = new Bundle();
+                extras.putDouble("long", currentLocation.getLongitude());
+                extras.putDouble("lat", currentLocation.getLatitude());
 
-        if (view.getId() == R.id.return_location) {
-            googleMap.animateCamera(CameraUpdateFactory.newLatLng(new
-                    LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())));
-        }
-
-        if (view.getId() == R.id.bluetooth) {
-            Intent serverIntent = new Intent(this, BluetoothActivity.class);
-            startActivityForResult(serverIntent, 1);
-        }
-
-        if (view.getId() == R.id.manual) {
-            Intent intent = new Intent(this, ManualControlActivity.class);
-            startActivityForResult(intent, 1);
+                intent.putExtras(extras);
+                startActivityForResult(intent, DESTINATON_CODE);
+                break;
+            case R.id.return_location:
+                googleMap.animateCamera(CameraUpdateFactory.newLatLng(new
+                        LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())));
+                sendMessage(currentLocation.getLatitude() + " " + currentLocation.getLongitude());
+                break;
+            case R.id.bluetooth:
+                Intent serverIntent = new Intent(this, BluetoothActivity.class);
+                startActivityForResult(serverIntent, BlUETOOTH_CODE);
+                break;
+            case R.id.manual:
+                Intent manualIntent = new Intent(this, ManualControlActivity.class);
+                startActivityForResult(manualIntent, MANUAL_CODE);
+                break;
         }
     }
+
+    /**
+     * Sends a message.
+     *
+     * @param message A string of text to send.
+     */
+    private void sendMessage(String message) {
+        // Check that we're actually connected before trying anything
+        if (dtService.getState() != DataTransmissionService.STATE_CONNECTED) {
+            return;
+        }
+
+        // Check that there's actually something to send
+        if (message.length() > 0) {
+            // Get the message bytes and tell the BluetoothChatService to write
+            byte[] send = message.getBytes();
+            dtService.write(send);
+
+            // Reset out string buffer to zero and clear the edit text field
+            mOutStringBuffer.setLength(0);
+        }
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 2 && resultCode == RESULT_OK && data != null) {
-            Bundle extras = data.getExtras();
-            destPos =  new LatLng(extras.getDouble("lat"), extras.getDouble("long"));
+        if (resultCode == RESULT_OK && data != null){
+            switch (requestCode){
+                case DESTINATON_CODE:
+                    Bundle extras = data.getExtras();
+                    destPos =  new LatLng(extras.getDouble("lat"), extras.getDouble("long"));
 
-            if (endMarker != null) {
-                endMarker.remove();
+                    if (endMarker != null) {
+                        endMarker.remove();
+                    }
+
+                    progressDialog = ProgressDialog.show(this, "Please wait.",
+                            "Fetching route information.", true);
+                    Routing routing = new Routing.Builder()
+                            .travelMode(Routing.TravelMode.WALKING)
+                            .withListener(this)
+                            .waypoints(startMarker.getPosition(), destPos)
+                            .build();
+                    routing.execute();
+                    break;
+                case BlUETOOTH_CODE:
+                    if (dtService == null){
+                        dtService = new DataTransmissionService(this, mHandler);
+                        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                        mOutStringBuffer = new StringBuffer("");
+                    }
+                    connectDevice(data, false);
+                    break;
             }
-
-            progressDialog = ProgressDialog.show(this, "Please wait.",
-                    "Fetching route information.", true);
-            Routing routing = new Routing.Builder()
-                    .travelMode(Routing.TravelMode.WALKING)
-                    .withListener(this)
-                    .waypoints(startMarker.getPosition(), destPos)
-                    .build();
-            routing.execute();
         }
+    }
+
+    /**
+     * The Handler that gets information back from the BluetoothChatService
+     */
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Constants.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case DataTransmissionService.STATE_CONNECTED:
+                            connectionStatus.setText(getString(R.string.title_connected_to) + " " + mConnectedDeviceName);
+                            break;
+                        case DataTransmissionService.STATE_CONNECTING:
+                            connectionStatus.setText(R.string.title_connecting);
+                            break;
+                        case DataTransmissionService.STATE_LISTEN:
+                        case DataTransmissionService.STATE_NONE:
+                            connectionStatus.setText(R.string.title_not_connected);
+                            break;
+                    }
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    // String writeMessage = new String(writeBuf);
+                    break;
+                case Constants.MESSAGE_READ:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    // String readMessage = new String(readBuf, 0, msg.arg1);
+                    break;
+                case Constants.MESSAGE_DEVICE_NAME:
+                    // save the connected device's name
+                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                    Toast.makeText(getApplicationContext(), getString(R.string.toast_connected_to) + " "
+                            + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                    break;
+                case Constants.MESSAGE_TOAST:
+                    Toast.makeText(getApplicationContext(), msg.getData().getString(Constants.TOAST), Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
+
+    /**
+     * Establish connection with other device
+     *
+     * @param data   An {@link Intent} with {@link BluetoothActivity#EXTRA_DEVICE_ADDRESS} extra.
+     * @param secure Socket Security type - Secure (true) , Insecure (false)
+     */
+    private void connectDevice(Intent data, boolean secure) {
+        // Get the device MAC address
+        String address = data.getExtras()
+                .getString(BluetoothActivity.EXTRA_DEVICE_ADDRESS);
+        // Get the BluetoothDevice object
+        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+        // Attempt to connect to the device
+        dtService.connect(device, secure);
     }
 
     @Override
@@ -380,6 +511,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onResume();
         if (mGoogleApiClient.isConnected()) {
             startLocationUpdates();
+        }
+
+        // Performing this check in onResume() covers the case in which BT was
+        // not enabled during onStart(), so we were paused to enable it...
+        // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
+        if (dtService != null) {
+            // Only if the state is STATE_NONE, do we know that we haven't started already
+            if (dtService.getState() == DataTransmissionService.STATE_NONE) {
+                // Start the Bluetooth chat services
+                dtService.start();
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (dtService != null) {
+            dtService.stop();
         }
     }
 

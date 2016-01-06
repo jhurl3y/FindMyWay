@@ -8,9 +8,12 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.R.color;
+import android.view.animation.TranslateAnimation;
 
-import com.fyp.findmyway.R;
-
+/**
+ * Modified version of zerokel Joysitck View
+ * https://github.com/zerokol/JoystickView
+ */
 public class JoystickView extends View implements Runnable {
     // Constants
     private final double RAD = 57.2957795;
@@ -40,6 +43,7 @@ public class JoystickView extends View implements Runnable {
     private int buttonRadius;
     private int lastAngle = 0;
     private int lastPower = 0;
+
 
     public JoystickView(Context context) {
         super(context);
@@ -91,7 +95,6 @@ public class JoystickView extends View implements Runnable {
         int d = Math.min(xNew, yNew);
         buttonRadius = (int) (d / 2 * 0.25);
         joystickRadius = (int) (d / 2 * 0.75);
-
     }
 
     @Override
@@ -178,6 +181,10 @@ public class JoystickView extends View implements Runnable {
                         getDirection());
         }
         return true;
+    }
+
+    public void animateJoystick(double time){
+
     }
 
     private int getAngle() {
