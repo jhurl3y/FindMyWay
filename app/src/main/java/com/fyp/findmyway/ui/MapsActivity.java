@@ -25,6 +25,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -35,6 +37,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener,
@@ -78,6 +81,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected Boolean showButtons;
 
     private ArrayList<Polyline> polylines;
+    private ArrayList<Circle> circles;
 
     private ProgressDialog progressDialog;
 
@@ -93,6 +97,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         buildGoogleApiClient();
         showButtons = false;
         polylines = new ArrayList<>();
+        circles = new ArrayList<>();
     }
 
     public void onBtnClicked(View view){
@@ -153,7 +158,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 poly.remove();
             }
         }
+        if (circles.size()>0) {
+            for (Circle circle : circles) {
+                circle.remove();
+            }
+        }
         polylines = new ArrayList<>();
+        circles = new ArrayList<>();
     }
 
     @Override
@@ -175,12 +186,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         for (int i = 0; i < route.size(); i++) {
-            PolylineOptions polyOptions = new PolylineOptions();
-            polyOptions.color(Color.BLUE);
-            polyOptions.width(10);
-            polyOptions.addAll(route.get(i).getPoints());
-            Polyline polyline = googleMap.addPolyline(polyOptions);
+
+            List <LatLng> points = route.get(i).getPoints();
+
+            Polyline polyline = googleMap.addPolyline(new PolylineOptions()
+                    .addAll(points)
+                    .width(10)
+                    .color(Color.BLUE)
+                    .zIndex(1));
             polylines.add(polyline);
+
+            for (int j = 0; j < points.size(); j++ ) {
+                Circle circle = googleMap.addCircle(new CircleOptions()
+                        .center(points.get(j))
+                        .radius(0.3)
+                        .fillColor(Color.DKGRAY)
+                        .strokeColor(Color.DKGRAY)
+                        .zIndex(2));
+                circles.add(circle);
+            }
+
             Toast.makeText(getApplicationContext(), "Distance: " + route.get(i).getDistanceText() + " Duration: " + route.get(i).getDurationText(), Toast.LENGTH_LONG).show();
         }
 

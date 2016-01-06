@@ -46,6 +46,7 @@ import java.util.Set;
  */
 public class BluetoothActivity extends Activity {
 
+    
     // Intent request codes
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
     private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;

@@ -4,10 +4,13 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.zerokol.views.JoystickView;
-import com.zerokol.views.JoystickView.OnJoystickMoveListener;
+//import com.zerokol.views.JoystickView;
+//import com.zerokol.views.JoystickView.OnJoystickMoveListener;
 
 import com.fyp.findmyway.R;
+import cd .JoystickView;
+import com.fyp.findmyway.views.JoystickView.OnJoystickMoveListener;
+
 
 public class ManualControlActivity extends FragmentActivity {
 
@@ -44,15 +47,15 @@ public class ManualControlActivity extends FragmentActivity {
                         break;
 
                     case JoystickView.FRONT_RIGHT:
-                        directionTextView.setText(R.string.left_front_lab);
+                        directionTextView.setText(R.string.front_right_lab);
                         break;
 
                     case JoystickView.RIGHT:
-                        directionTextView.setText(R.string.left_lab);
+                        directionTextView.setText(R.string.right_lab);
                         break;
 
                     case JoystickView.RIGHT_BOTTOM:
-                        directionTextView.setText(R.string.bottom_left_lab);
+                        directionTextView.setText(R.string.right_bottom_lab);
                         break;
 
                     case JoystickView.BOTTOM:
@@ -60,15 +63,15 @@ public class ManualControlActivity extends FragmentActivity {
                         break;
 
                     case JoystickView.BOTTOM_LEFT:
-                        directionTextView.setText(R.string.right_bottom_lab);
+                        directionTextView.setText(R.string.bottom_left_lab);
                         break;
 
                     case JoystickView.LEFT:
-                        directionTextView.setText(R.string.right_lab);
+                        directionTextView.setText(R.string.left_lab);
                         break;
 
                     case JoystickView.LEFT_FRONT:
-                        directionTextView.setText(R.string.front_right_lab);
+                        directionTextView.setText(R.string.left_front_lab);
                         break;
 
                     default:
