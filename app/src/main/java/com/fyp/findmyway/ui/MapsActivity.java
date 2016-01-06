@@ -150,7 +150,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case R.id.return_location:
                 googleMap.animateCamera(CameraUpdateFactory.newLatLng(new
                         LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())));
-                sendMessage(currentLocation.getLatitude() + " " + currentLocation.getLongitude());
                 break;
             case R.id.bluetooth:
                 Intent serverIntent = new Intent(this, BluetoothActivity.class);
@@ -170,6 +169,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     private void sendMessage(String message) {
         // Check that we're actually connected before trying anything
+        if (dtService == null){
+            return;
+        }
         if (dtService.getState() != DataTransmissionService.STATE_CONNECTED) {
             return;
         }
@@ -319,6 +321,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (int i = 0; i < route.size(); i++) {
 
             List <LatLng> points = route.get(i).getPoints();
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("\n");
+            sb.append("Waypoints for journey:");
+            sb.append("\n");
+
+            for (LatLng l : points)
+            {
+                sb.append(" " + l.latitude + " " + l.longitude);
+                // sb.append("\n");
+            }
+            sendMessage(sb.toString());
 
             Polyline polyline = googleMap.addPolyline(new PolylineOptions()
                     .addAll(points)
