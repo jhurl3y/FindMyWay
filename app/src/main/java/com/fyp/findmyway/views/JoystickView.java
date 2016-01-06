@@ -7,6 +7,9 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.R.color;
+
+import com.fyp.findmyway.R;
 
 public class JoystickView extends View implements Runnable {
     // Constants
@@ -62,15 +65,15 @@ public class JoystickView extends View implements Runnable {
         secondaryCircle.setStyle(Paint.Style.STROKE);
 
         verticalLine = new Paint();
-        verticalLine.setStrokeWidth(5);
-        verticalLine.setColor(Color.RED);
+        verticalLine.setStrokeWidth(2);
+        verticalLine.setColor(Color.BLACK);
 
         horizontalLine = new Paint();
         horizontalLine.setStrokeWidth(2);
         horizontalLine.setColor(Color.BLACK);
 
         button = new Paint(Paint.ANTI_ALIAS_FLAG);
-        button.setColor(Color.RED);
+        button.setColor(getResources().getColor(color.holo_blue_dark));
         button.setStyle(Paint.Style.FILL);
     }
 
@@ -150,9 +153,9 @@ public class JoystickView extends View implements Runnable {
         yPosition = (int) event.getY();
         double abs = Math.sqrt((xPosition - centerX) * (xPosition - centerX)
                 + (yPosition - centerY) * (yPosition - centerY));
-        if (abs > joystickRadius) {
-            xPosition = (int) ((xPosition - centerX) * joystickRadius / abs + centerX);
-            yPosition = (int) ((yPosition - centerY) * joystickRadius / abs + centerY);
+        if (abs + buttonRadius > joystickRadius) {
+            xPosition = (int) (((xPosition - centerX) * (joystickRadius - buttonRadius) / (abs)) + centerX);
+            yPosition = (int) (((yPosition - centerY) * (joystickRadius- buttonRadius) / (abs)) + centerY);
         }
         invalidate();
         if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -216,7 +219,7 @@ public class JoystickView extends View implements Runnable {
     private int getPower() {
         return (int) (100 * Math.sqrt((xPosition - centerX)
                 * (xPosition - centerX) + (yPosition - centerY)
-                * (yPosition - centerY)) / joystickRadius);
+                * (yPosition - centerY)) / (joystickRadius - buttonRadius));
     }
 
     private int getDirection() {

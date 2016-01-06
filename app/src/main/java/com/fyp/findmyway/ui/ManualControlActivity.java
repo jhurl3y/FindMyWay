@@ -8,7 +8,7 @@ import android.widget.TextView;
 //import com.zerokol.views.JoystickView.OnJoystickMoveListener;
 
 import com.fyp.findmyway.R;
-import cd .JoystickView;
+import com.fyp.findmyway.views.JoystickView;
 import com.fyp.findmyway.views.JoystickView.OnJoystickMoveListener;
 
 
