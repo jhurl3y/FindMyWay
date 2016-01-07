@@ -39,11 +39,11 @@ import java.util.UUID;
  */
 public class DataTransmissionService {
     // Debugging
-    private static final String TAG = "BluetoothChatService";
+    private static final String TAG = "DataTransmissionService";
 
     // Name for the SDP record when creating server socket
-    private static final String NAME_SECURE = "BluetoothChatSecure";
-    private static final String NAME_INSECURE = "BluetoothChatInsecure";
+    private static final String NAME_SECURE = "DataTransmissionSecure";
+    private static final String NAME_INSECURE = "DataTransmissionInsecure";
 
     // Unique UUID for this application
     private static final UUID MY_UUID_SECURE =
