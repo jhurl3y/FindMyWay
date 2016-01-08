@@ -12,10 +12,14 @@ import com.google.android.gms.location.LocationListener;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -121,6 +125,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     TextView connectionStatus = null;
 
+    private boolean mBound = false;
+
+    private boolean btStart = false;
+
     @Override
     protected void onCreate (Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -169,9 +177,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     private void sendMessage(String message) {
         // Check that we're actually connected before trying anything
-        if (dtService == null){
+        if (dtService == null || mBound == false){
             return;
         }
+
+        if (dtService.getmHandler() == null){
+            return;
+        }
+
         if (dtService.getState() != DataTransmissionService.STATE_CONNECTED) {
             return;
         }
@@ -212,16 +225,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     routing.execute();
                     break;
                 case BlUETOOTH_CODE:
-                    if (dtService == null){
-                        dtService = new DataTransmissionService(this, mHandler);
+                     if (mBound){
                         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                         mOutStringBuffer = new StringBuffer("");
-                    }
-                    connectDevice(data, false);
+                        dtService.setmHandler(mHandler);
+                        btStart = true;
+                        connectDevice(data, false);
+                     }
                     break;
+                case MANUAL_CODE:
+                    dtService.setmHandler(mHandler);
             }
         }
     }
+
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            mBound = true;
+            DataTransmissionService.LocalBinder binder = (DataTransmissionService.LocalBinder) service;
+            dtService = binder.getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+        }
+    };
+
 
     /**
      * The Handler that gets information back from the BluetoothChatService
@@ -422,7 +456,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else {
             startMarker = googleMap.addMarker(new MarkerOptions().position(latLng)
                                                                  .title("You are here!")
-                                                                 .icon(BitmapDescriptorFactory.fromResource( R.drawable.ic_location )));
+                                                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_location)));
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(latLng) // Sets the center of the map to current location
                     .zoom(17)                   // Sets the zoom
@@ -502,6 +536,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
+
+        if (!mBound) {
+            // Bind to LocalService
+            Intent intent = new Intent(this, DataTransmissionService.class);
+            bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        }
     }
 
     @Override
@@ -510,6 +550,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
+        // Unbind from the service
+//        if (mBound) {
+//            unbindService(mConnection);
+//            mBound = false;
+//        }
     }
 
     @Override
@@ -526,17 +571,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (mGoogleApiClient.isConnected()) {
             startLocationUpdates();
         }
-
-        // Performing this check in onResume() covers the case in which BT was
-        // not enabled during onStart(), so we were paused to enable it...
-        // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
-        if (dtService != null) {
-            // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (dtService.getState() == DataTransmissionService.STATE_NONE) {
-                // Start the Bluetooth chat services
+        // mBound == true &
+        if (btStart == true){
+            if (dtService.getState() == DataTransmissionService.STATE_NONE){
                 dtService.start();
             }
+            btStart = false;
         }
+
     }
 
     @Override

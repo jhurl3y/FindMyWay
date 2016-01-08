@@ -16,13 +16,17 @@ package com.fyp.findmyway.services;
  * limitations under the License.
  */
 
+import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 
@@ -37,7 +41,7 @@ import java.util.UUID;
  * incoming connections, a thread for connecting with a device, and a
  * thread for performing data transmissions when connected.
  */
-public class DataTransmissionService {
+public class DataTransmissionService extends Service {
     // Debugging
     private static final String TAG = "DataTransmissionService";
 
@@ -52,31 +56,73 @@ public class DataTransmissionService {
             UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee");
 
     // Member fields
-    private final BluetoothAdapter mAdapter;
-    private final Handler mHandler;
+    private BluetoothAdapter mAdapter;
+    private Handler mHandler;
     private AcceptThread mSecureAcceptThread;
     private AcceptThread mInsecureAcceptThread;
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
     private int mState;
+    private String connectedDeviceName;
 
     // Constants that indicate the current connection state
     public static final int STATE_NONE = 0;       // we're doing nothing
     public static final int STATE_LISTEN = 1;     // now listening for incoming connections
     public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
     public static final int STATE_CONNECTED = 3;  // now connected to a remote device
+    // Binder given to clients
+    public final IBinder mBinder = new LocalBinder();
+//
+//    /**
+//     * Constructor. Prepares a new BluetoothChat session.
+//     *
+//     * @param context The UI Activity Context
+//     * @param handler A Handler to send messages back to the UI Activity
+//     */
+//    public DataTransmissionService(Context context, Handler handler) {
+//        mAdapter = BluetoothAdapter.getDefaultAdapter();
+//        mState = STATE_NONE;
+//        mHandler = handler;
+//    }
 
-    /**
-     * Constructor. Prepares a new BluetoothChat session.
-     *
-     * @param context The UI Activity Context
-     * @param handler A Handler to send messages back to the UI Activity
-     */
-    public DataTransmissionService(Context context, Handler handler) {
+    @Override
+    public void onCreate() {
+        // Code to execute when the service is first created
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
-        mHandler = handler;
+        mHandler = null;
     }
+    /**
+     * Class used for the client Binder.  Because we know this service always
+     * runs in the same process as its clients, we don't need to deal with IPC.
+     */
+    public class LocalBinder extends Binder {
+        public DataTransmissionService getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return DataTransmissionService.this;
+        }
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
+    }
+
+    public void setmHandler(Handler mHandler) {
+        this.mHandler = mHandler;
+    }
+
+    public Handler getmHandler() { return mHandler; }
+
+    public BluetoothAdapter getmAdapter() {
+        return mAdapter;
+    }
+
+    public String getConnectedDeviceName() {
+        return connectedDeviceName;
+    }
+
+
 
     /**
      * Set the current state of the chat connection
@@ -138,7 +184,6 @@ public class DataTransmissionService {
      */
     public synchronized void connect(BluetoothDevice device, boolean secure) {
         Log.d(TAG, "connect to: " + device);
-
         // Cancel any thread attempting to make a connection
         if (mState == STATE_CONNECTING) {
             if (mConnectThread != null) {
@@ -195,13 +240,13 @@ public class DataTransmissionService {
         mConnectedThread = new ConnectedThread(socket, socketType);
         mConnectedThread.start();
 
+        connectedDeviceName = device.getName();
         // Send the name of the connected device back to the UI Activity
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_DEVICE_NAME);
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.DEVICE_NAME, device.getName());
+        bundle.putString(Constants.DEVICE_NAME, connectedDeviceName);
         msg.setData(bundle);
         mHandler.sendMessage(msg);
-
         setState(STATE_CONNECTED);
     }
 
@@ -231,6 +276,7 @@ public class DataTransmissionService {
             mInsecureAcceptThread = null;
         }
         setState(STATE_NONE);
+
     }
 
     /**

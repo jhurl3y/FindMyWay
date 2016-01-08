@@ -67,11 +67,23 @@
         android:layout_below="@id/powerTextView"
         android:id="@+id/directionTextView" />
 
+    <TextView android:id="@+id/connection_stat"
+        android:text="Not Connected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:paddingRight="5dp"
+        android:paddingTop="5dp"
+        android:layout_alignParentRight="true"
+        style="?android:attr/textAppearanceMedium"
+        />
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:gravity="center"
         >
 
         <com.fyp.findmyway.views.JoystickView

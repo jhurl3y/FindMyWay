@@ -52,6 +52,12 @@
             android:name=".ui.ManualControlActivity"
             android:label="@string/title_activity_manual_control" >
         </activity>
+
+        <service
+            android:name=".services.DataTransmissionService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>
