@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.SeekBar;
 
 //import com.zerokol.views.JoystickView;
 //import com.zerokol.views.JoystickView.OnJoystickMoveListener;
