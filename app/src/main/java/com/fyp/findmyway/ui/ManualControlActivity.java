@@ -65,6 +65,7 @@ public class ManualControlActivity extends FragmentActivity implements SeekBar.O
         seekBar.setMax(10);
         setupJoystick();
         connectionStat = (TextView) findViewById(R.id.connection_stat);
+        directionTextView.setText(R.string.center_lab);
     }
 
     public void setupJoystick(){

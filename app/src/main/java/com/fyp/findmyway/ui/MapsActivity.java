@@ -594,9 +594,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (dtService != null) {
-            dtService.stop();
+//        if (dtService != null && dtService.getmHandler() != null) {
+//            dtService.stop();
+//        }
+        if (mBound) {
+            unbindService(mConnection);
+            //mBound = false;
         }
+
     }
 
     @Override

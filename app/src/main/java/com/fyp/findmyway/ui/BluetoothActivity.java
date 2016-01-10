@@ -77,6 +77,10 @@ public class BluetoothActivity extends Activity {
      */
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
 
+    private ListView pairedListView;
+    private ListView newDevicesListView;
+    private ArrayAdapter<String> pairedDevicesArrayAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,17 +103,16 @@ public class BluetoothActivity extends Activity {
 
         // Initialize array adapters. One for already paired devices and
         // one for newly discovered devices
-        ArrayAdapter<String> pairedDevicesArrayAdapter =
-                new ArrayAdapter<String>(this, R.layout.device_name);
+        pairedDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
         mNewDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
 
         // Find and set up the ListView for paired devices
-        ListView pairedListView = (ListView) findViewById(R.id.paired_devices);
+        pairedListView = (ListView) findViewById(R.id.paired_devices);
         pairedListView.setAdapter(pairedDevicesArrayAdapter);
         pairedListView.setOnItemClickListener(mDeviceClickListener);
 
         // Find and set up the ListView for newly discovered devices
-        ListView newDevicesListView = (ListView) findViewById(R.id.new_devices);
+        newDevicesListView = (ListView) findViewById(R.id.new_devices);
         newDevicesListView.setAdapter(mNewDevicesArrayAdapter);
         newDevicesListView.setOnItemClickListener(mDeviceClickListener);
 
@@ -253,9 +256,24 @@ public class BluetoothActivity extends Activity {
 //        super.onActivityResult(requestCode, resultCode, data);
 //
 //        if (resultCode == RESULT_OK && data != null) {
-//            switch (requestCode){
+//            switch (requestCode) {
 //                case REQUEST_ENABLE_BT:
+//                    // Get a set of currently paired devices
+//                    Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
 //
+//                    // If there are paired devices, add each one to the ArrayAdapter
+//                    if (pairedDevices.size() > 0) {
+//                        findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
+//                        for (BluetoothDevice device : pairedDevices) {
+//                            pairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+//                        }
+//                    } else {
+//                        String noDevices = getResources().getText(R.string.none_paired).toString();
+//                        pairedDevicesArrayAdapter.add(noDevices);
+//                    }
+//                    break;
+//
+//            }
 //        }
 //    }
 
