@@ -235,7 +235,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     break;
                 case MANUAL_CODE:
                     dtService.setmHandler(mHandler);
+                    break;
+
             }
+        }
+    }
+
+    public void updateConnectionStatus(int state){
+        switch (state) {
+            case DataTransmissionService.STATE_CONNECTED:
+                connectionStatus.setText(getString(R.string.title_connected_to) + " " + mConnectedDeviceName);
+                break;
+            case DataTransmissionService.STATE_CONNECTING:
+                connectionStatus.setText(R.string.title_connecting);
+                break;
+            case DataTransmissionService.STATE_LISTEN:
+            case DataTransmissionService.STATE_NONE:
+                connectionStatus.setText(R.string.title_not_connected);
+                break;
         }
     }
 
@@ -265,18 +282,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
-                    switch (msg.arg1) {
-                        case DataTransmissionService.STATE_CONNECTED:
-                            connectionStatus.setText(getString(R.string.title_connected_to) + " " + mConnectedDeviceName);
-                            break;
-                        case DataTransmissionService.STATE_CONNECTING:
-                            connectionStatus.setText(R.string.title_connecting);
-                            break;
-                        case DataTransmissionService.STATE_LISTEN:
-                        case DataTransmissionService.STATE_NONE:
-                            connectionStatus.setText(R.string.title_not_connected);
-                            break;
-                    }
+                    updateConnectionStatus(msg.arg1);
                     break;
                 case Constants.MESSAGE_WRITE:
                     byte[] writeBuf = (byte[]) msg.obj;
@@ -568,6 +574,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onResume() {
         super.onResume();
+        if (dtService != null) {
+            updateConnectionStatus(dtService.getState());
+        }
+
         if (mGoogleApiClient.isConnected()) {
             startLocationUpdates();
         }
