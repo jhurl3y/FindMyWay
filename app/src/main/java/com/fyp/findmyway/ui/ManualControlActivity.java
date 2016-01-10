@@ -24,15 +24,16 @@ import com.fyp.findmyway.views.JoystickView;
 import com.fyp.findmyway.views.JoystickView.OnJoystickMoveListener;
 
 
-public class ManualControlActivity extends FragmentActivity {
-
+public class ManualControlActivity extends FragmentActivity implements SeekBar.OnSeekBarChangeListener {
 
     private TextView angleTextView;
     private TextView powerTextView;
+    private TextView speedTextView;
     private TextView directionTextView;
     // Importing as others views
     private JoystickView joystick;
-
+    private SeekBar seekBar;
+    private int speed;
     DataTransmissionService mService;
     boolean mBound = false;
 
@@ -53,11 +54,15 @@ public class ManualControlActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_control);
 
-        angleTextView = (TextView) findViewById(R.id.angleTextView);
-        powerTextView = (TextView) findViewById(R.id.powerTextView);
+        // angleTextView = (TextView) findViewById(R.id.angleTextView);
+        // powerTextView = (TextView) findViewById(R.id.powerTextView);
+        speedTextView = (TextView) findViewById(R.id.speedTextView);
         directionTextView = (TextView) findViewById(R.id.directionTextView);
         // referring as others views
         joystick = (JoystickView) findViewById(R.id.joystickView);
+        seekBar = ((SeekBar) findViewById(R.id.slider));
+        seekBar.setOnSeekBarChangeListener(this);
+        seekBar.setMax(10);
         setupJoystick();
         connectionStat = (TextView) findViewById(R.id.connection_stat);
     }
@@ -68,9 +73,8 @@ public class ManualControlActivity extends FragmentActivity {
         joystick.setOnJoystickMoveListener(new OnJoystickMoveListener() {
             @Override
             public void onValueChanged(int angle, int power, int direction) {
-                angleTextView.setText("Angle: " + String.valueOf(angle) + "°");
-                powerTextView.setText("Power: " + String.valueOf(power) + "%");
-                sendMessage(String.valueOf(angle));
+                // angleTextView.setText("Angle: " + String.valueOf(angle) + "°");
+                sendMessage(String.valueOf(angle) + " " + String.valueOf(speed));
                 // Direction values not right.. front/right mixed up in library
                 switch (direction) {
                     case JoystickView.FRONT:
@@ -219,6 +223,22 @@ public class ManualControlActivity extends FragmentActivity {
             byte[] send = message.getBytes();
             mService.write(send);
         }
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        speed = progress;
+        speedTextView.setText("Speed: " + String.valueOf(speed));
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
     }
 }
 

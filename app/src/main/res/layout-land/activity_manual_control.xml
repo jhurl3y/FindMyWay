@@ -54,34 +54,44 @@
         style="?android:attr/textAppearanceMedium"
         />
 
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:paddingRight="10dp"-->
+        <!--android:paddingTop="5dp"-->
+        <!--android:layout_below="@id/connection_stat"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:id="@+id/angleTextView" />-->
+
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:paddingRight="10dp"-->
+        <!--android:paddingTop="5dp"-->
+        <!--android:paddingBottom="5dp"-->
+        <!--android:layout_below="@id/angleTextView"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:id="@+id/powerTextView" />-->
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingRight="10dp"
         android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:layout_alignParentRight="true"
         android:layout_below="@id/connection_stat"
-        android:layout_alignParentRight="true"
-        android:id="@+id/angleTextView" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingRight="10dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:layout_below="@id/angleTextView"
-        android:layout_alignParentRight="true"
-        android:id="@+id/powerTextView" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingRight="10dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/powerTextView"
         android:id="@+id/directionTextView" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/directionTextView"
+        android:id="@+id/speedTextView" />
 
 
     <android.widget.SeekBar android:id="@+id/slider"

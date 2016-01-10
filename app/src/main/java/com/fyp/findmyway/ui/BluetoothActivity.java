@@ -248,4 +248,15 @@ public class BluetoothActivity extends Activity {
         }
     };
 
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if (resultCode == RESULT_OK && data != null) {
+//            switch (requestCode){
+//                case REQUEST_ENABLE_BT:
+//
+//        }
+//    }
+
 }
