@@ -33,7 +33,6 @@ public class ManualControlActivity extends FragmentActivity implements SeekBar.O
     // Importing as others views
     private JoystickView joystick;
     private SeekBar seekBar;
-    private int speed;
     DataTransmissionService mService;
     boolean mBound = false;
 
@@ -46,6 +45,8 @@ public class ManualControlActivity extends FragmentActivity implements SeekBar.O
      * Name of the connected device
      */
     private String mConnectedDeviceName = null;
+    private int joystickAngle = 0;
+    private int speed = 0;
 
     TextView connectionStat = null;
 
@@ -75,7 +76,15 @@ public class ManualControlActivity extends FragmentActivity implements SeekBar.O
             @Override
             public void onValueChanged(int angle, int power, int direction) {
                 // angleTextView.setText("Angle: " + String.valueOf(angle) + "°");
-                sendMessage(String.valueOf(angle) + " " + String.valueOf(speed));
+                if (angle != joystickAngle) {
+                    if (power == 0){
+                        sendMessage(String.valueOf(angle) + " " + String.valueOf(power));
+                    }
+                    else {
+                        sendMessage(String.valueOf(angle) + " " + String.valueOf(speed));
+                    }
+                    joystickAngle = angle;
+                }
                 // Direction values not right.. front/right mixed up in library
                 switch (direction) {
                     case JoystickView.FRONT:
@@ -229,6 +238,7 @@ public class ManualControlActivity extends FragmentActivity implements SeekBar.O
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         speed = progress;
+        // sendMessage(String.valueOf(joystickAngle) + " " + String.valueOf(speed));
         speedTextView.setText("Speed: " + String.valueOf(speed));
     }
 
