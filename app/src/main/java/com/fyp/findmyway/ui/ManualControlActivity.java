@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -35,6 +36,8 @@ public class ManualControlActivity extends FragmentActivity implements SeekBar.O
     private SeekBar seekBar;
     DataTransmissionService mService;
     boolean mBound = false;
+    private Vibrator v;
+    private int prev_power;
 
     /**
      * Local Bluetooth adapter
@@ -67,6 +70,7 @@ public class ManualControlActivity extends FragmentActivity implements SeekBar.O
         setupJoystick();
         connectionStat = (TextView) findViewById(R.id.connection_stat);
         directionTextView.setText(R.string.center_lab);
+        v = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     public void setupJoystick(){
@@ -76,6 +80,16 @@ public class ManualControlActivity extends FragmentActivity implements SeekBar.O
             @Override
             public void onValueChanged(int angle, int power, int direction) {
                 // angleTextView.setText("Angle: " + String.valueOf(angle) + "°");
+
+                if (prev_power == 0) {
+                    v.vibrate(100);
+                }
+                else if (prev_power != 0 && power == 0){
+                    v.vibrate(100);
+                }
+
+                prev_power = power;
+
                 if (angle != joystickAngle) {
                     if (power == 0){
                         sendMessage(String.valueOf(angle) + " " + String.valueOf(power));
