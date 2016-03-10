@@ -25,6 +25,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -108,7 +109,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int STARTED_JOURNEY = 1;
     private static final int NO_JOURNEY = 2;
     private static final int JOURNEY_PAUSED = 3;
-    private static final int JOURNEY_RESUMED = 4;
+//    private static final int JOURNEY_RESUMED = 4;
     private static final int JOURNEY_FINISHED = 5;
     private static final int PRE_JOURNEY = 6;
 
@@ -175,10 +176,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case R.id.bluetooth:
                 Intent serverIntent = new Intent(this, BluetoothActivity.class);
                 startActivityForResult(serverIntent, BlUETOOTH_CODE);
+
                 break;
             case R.id.manual:
                 Intent manualIntent = new Intent(this, ManualControlActivity.class);
                 startActivityForResult(manualIntent, MANUAL_CODE);
+                if (journeyState == STARTED_JOURNEY) {
+                    journeyState = JOURNEY_PAUSED;
+                }
                 break;
             case R.id.yes:
                 beginJourney.setVisibility(View.GONE);
@@ -238,6 +243,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        View mainBar = findViewById(R.id.main_bar);
+        View dst = findViewById(R.id.dst);
+        View returnLocation = findViewById(R.id.return_location);
+        View beginJourney = findViewById(R.id.start_journey);
 
         if (resultCode == RESULT_OK && data != null){
             switch (requestCode){
@@ -257,9 +266,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .waypoints(startMarker.getPosition(), destPos)
                             .build();
                     routing.execute();
-                    View mainBar = findViewById(R.id.main_bar);
-                    View dst = findViewById(R.id.dst);
-                    View returnLocation = findViewById(R.id.return_location);
+
                     mainBar.setVisibility(View.GONE);
                     dst.setVisibility(View.GONE);
                     returnLocation.setVisibility(View.GONE);
@@ -277,9 +284,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 case MANUAL_CODE:
                     dtService.setmHandler(mHandler);
                     break;
-
             }
         }
+        else {
+            if (requestCode == MANUAL_CODE & journeyState == JOURNEY_PAUSED){
+                mainBar.setVisibility(View.GONE);
+                dst.setVisibility(View.GONE);
+                returnLocation.setVisibility(View.GONE);
+                TextView message = (TextView) findViewById(R.id.message);
+                message.setText("Resume journey?");
+                beginJourney.animate().translationY(beginJourney.getHeight() * 5);
+                beginJourney.setVisibility(beginJourney.VISIBLE);
+                beginJourney.animate().translationY(0);
+            }
+        }
+
+
     }
 
     public void updateConnectionStatus(int state){
@@ -474,6 +494,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 View dst = findViewById(R.id.dst);
                 View returnLocation = findViewById(R.id.return_location);
                 View beginJourney = findViewById(R.id.start_journey);
+                Button bt = (Button) findViewById(R.id.bluetooth);
+                Button man = (Button) findViewById(R.id.manual);
 
                 if (showButtons){
 
@@ -488,6 +510,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         returnLocation.setVisibility(View.VISIBLE);
                         dst.animate().alpha(1.0f);
                         returnLocation.animate().alpha(1.0f);
+                        bt.setClickable(true);
+                        man.setClickable(true);
+                        dst.setClickable(true);
+                        returnLocation.setClickable(true);
                     }
 
                     showButtons = !showButtons;
@@ -503,6 +529,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         returnLocation.setVisibility(View.VISIBLE);
                         dst.animate().alpha(0.0f);
                         returnLocation.animate().alpha(0.0f);
+                        bt.setClickable(false);
+                        man.setClickable(false);
+                        dst.setClickable(false);
+                        returnLocation.setClickable(false);
                     }
                     showButtons = !showButtons;
                 }
