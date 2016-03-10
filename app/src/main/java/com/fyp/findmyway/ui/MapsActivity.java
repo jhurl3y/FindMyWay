@@ -109,9 +109,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int STARTED_JOURNEY = 1;
     private static final int NO_JOURNEY = 2;
     private static final int JOURNEY_PAUSED = 3;
-//    private static final int JOURNEY_RESUMED = 4;
     private static final int JOURNEY_FINISHED = 5;
     private static final int PRE_JOURNEY = 6;
+
+    private List<LatLng> journeyWaypoints;
+    private int waypointTracker = 0;
 
     /**
      * String buffer for outgoing messages
@@ -183,6 +185,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivityForResult(manualIntent, MANUAL_CODE);
                 if (journeyState == STARTED_JOURNEY) {
                     journeyState = JOURNEY_PAUSED;
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(journeyState);
+                    sendMessage(sb.toString());
                 }
                 break;
             case R.id.yes:
@@ -192,6 +197,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mainBar.animate().translationY(-mainBar.getHeight()*2);
                 dst.animate().alpha(0.0f);
                 returnLocation.animate().alpha(0.0f);
+                sendWaypoints();
                 break;
             case R.id.no:
                 for (int i = 0; i < polylines.size(); i++ ) {
@@ -200,6 +206,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 endMarker.remove();
                 beginJourney.setVisibility(View.GONE);
                 journeyState = NO_JOURNEY;
+                StringBuilder sb = new StringBuilder();
+                sb.append(journeyState);
+                sendMessage(sb.toString());
                 showButtons = !showButtons;
                 mainBar.animate().translationY(-mainBar.getHeight()*2);
                 dst.animate().alpha(0.0f);
@@ -266,11 +275,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .waypoints(startMarker.getPosition(), destPos)
                             .build();
                     routing.execute();
-
+                    if (dtService == null || mBound == false){
+                        break;
+                    }
+                    if (dtService.getmHandler() == null){
+                        break;
+                    }
+                    if (dtService.getState() != DataTransmissionService.STATE_CONNECTED) {
+                        break;
+                    }
                     mainBar.setVisibility(View.GONE);
                     dst.setVisibility(View.GONE);
                     returnLocation.setVisibility(View.GONE);
                     journeyState = PRE_JOURNEY;
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(journeyState);
+                    sendMessage(sb.toString());
                     break;
                 case BlUETOOTH_CODE:
                      if (mBound){
@@ -298,7 +318,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 beginJourney.animate().translationY(0);
             }
         }
-
 
     }
 
@@ -421,22 +440,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         for (int i = 0; i < route.size(); i++) {
 
-            List <LatLng> points = route.get(i).getPoints();
-
-            StringBuilder sb = new StringBuilder();
-            sb.append("\n");
-            sb.append("Waypoints for journey:");
-            sb.append("\n");
-
-            for (LatLng l : points)
-            {
-                sb.append(" " + l.latitude + " " + l.longitude);
-                // sb.append("\n");
-            }
-            sendMessage(sb.toString());
+            journeyWaypoints = route.get(i).getPoints();
 
             Polyline polyline = googleMap.addPolyline(new PolylineOptions()
-                    .addAll(points)
+                    .addAll(journeyWaypoints)
                     .width(10)
                     .color(Color.BLUE)
                     .zIndex(1));
@@ -458,7 +465,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         endMarker = googleMap.addMarker(new MarkerOptions().position(destPos)
                 .title("Destination")
                 .icon(BitmapDescriptorFactory.defaultMarker()));
+        if (dtService == null || mBound == false){
+            return;
+        }
+        if (dtService.getmHandler() == null){
+            return;
+        }
+        if (dtService.getState() != DataTransmissionService.STATE_CONNECTED) {
+            return;
+        }
         View beginJourney = findViewById(R.id.start_journey);
+        TextView message = (TextView) findViewById(R.id.message);
+        message.setText("Begin journey?");
         beginJourney.animate().translationY(beginJourney.getHeight()*5);
         showButtons = !showButtons;
     }
@@ -473,6 +491,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onRoutingCancelled() {
 
+    }
+
+    public void sendWaypoints(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(journeyState);
+        sb.append("\n");
+        for (int i = waypointTracker; i < waypointTracker + 2; i++)
+        {
+            LatLng l = journeyWaypoints.get(i);
+            sb.append(" " + l.latitude + " " + l.longitude);
+            sb.append("\n");
+        }
+
+        sendMessage(sb.toString());
+    }
+
+    public void waypointReached(String message){
+        // if ack ok
+        // waypointTracker++;
+        // sendWaypoints();
     }
 
     protected void createLocationRequest() {
