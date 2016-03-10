@@ -104,6 +104,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
     private static final int REQUEST_ENABLE_BT = 3;
 
+    private int journeyState = NO_JOURNEY;
+    private static final int STARTED_JOURNEY = 1;
+    private static final int NO_JOURNEY = 2;
+    private static final int JOURNEY_PAUSED = 3;
+    private static final int JOURNEY_RESUMED = 4;
+    private static final int JOURNEY_FINISHED = 4;
+
+
+
     /**
      * String buffer for outgoing messages
      */
@@ -142,6 +151,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         circles = new ArrayList<>();
         connectionStatus = (TextView) findViewById(R.id.connection_status);
     }
+
 
     public void onBtnClicked(View view) {
 
@@ -426,21 +436,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onMapClick(LatLng point) {
-                View main_bar = findViewById(R.id.main_bar);
+                View mainBar = findViewById(R.id.main_bar);
                 View dst = findViewById(R.id.dst);
-                View return_location = findViewById(R.id.return_location);
+                View returnLocation = findViewById(R.id.return_location);
+                View beginJourney = findViewById(R.id.start_journey);
 
                 if (showButtons){
-                    main_bar.setVisibility(main_bar.VISIBLE);
-                    main_bar.animate().translationY(0);
+                    mainBar.setVisibility(mainBar.VISIBLE);
+                    mainBar.animate().translationY(0);
+                    beginJourney.setVisibility(mainBar.VISIBLE);
+                    beginJourney.animate().translationY(0);
                     dst.animate().alpha(1.0f);
-                    return_location.animate().alpha(1.0f);
+                    returnLocation.animate().alpha(1.0f);
                     showButtons = !showButtons;
                 } else {
-                    main_bar.setVisibility(main_bar.VISIBLE);
-                    main_bar.animate().translationY(-main_bar.getHeight()*2);
+                    mainBar.setVisibility(mainBar.VISIBLE);
+                    mainBar.animate().translationY(-mainBar.getHeight()*2);
+                    beginJourney.setVisibility(mainBar.VISIBLE);
+                    beginJourney.animate().translationY(beginJourney.getHeight()*5);
                     dst.animate().alpha(0.0f);
-                    return_location.animate().alpha(0.0f);
+                    returnLocation.animate().alpha(0.0f);
                     showButtons = !showButtons;
                 }
             }

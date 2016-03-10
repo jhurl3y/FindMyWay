@@ -522,7 +522,7 @@ public class DataTransmissionService extends Service {
                 try {
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);
-
+                    //Log.i(TAG, "In here In here");
                     // Send the obtained bytes to the UI Activity
                     mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();

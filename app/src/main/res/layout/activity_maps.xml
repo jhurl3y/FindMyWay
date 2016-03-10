@@ -107,4 +107,59 @@
         android:minHeight="60dip"
         android:minWidth="60dip"/>
 
+    <RelativeLayout
+        android:id="@+id/start_journey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal"
+        android:background="@drawable/journey_shape">
+
+        <TextView android:id="@+id/message"
+            android:text="Begin journey?"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:textSize="24dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            style="?android:attr/textAppearanceMedium"
+            />
+
+        <Button
+            android:id="@+id/yes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_below="@id/message"
+            android:onClick="onBtnClicked"
+            android:background = "@drawable/yes_button"
+            android:minHeight="50dip"
+            android:minWidth="50dip"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="5dp"
+            />
+
+        <Button
+            android:id="@+id/no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_toRightOf="@+id/yes"
+            android:onClick="onBtnClicked"
+            android:layout_below="@id/message"
+            android:background = "@drawable/cancel_button"
+            android:minHeight="50dip"
+            android:minWidth="50dip"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="5dp"
+            />
+    </RelativeLayout>
+
 </RelativeLayout>

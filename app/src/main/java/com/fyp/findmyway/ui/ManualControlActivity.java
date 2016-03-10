@@ -81,12 +81,12 @@ public class ManualControlActivity extends FragmentActivity implements SeekBar.O
             public void onValueChanged(int angle, int power, int direction) {
                 // angleTextView.setText("Angle: " + String.valueOf(angle) + "°");
 
-                if (prev_power == 0) {
-                    v.vibrate(100);
-                }
-                else if (prev_power != 0 && power == 0){
-                    v.vibrate(100);
-                }
+//                if (prev_power == 0) {
+//                    v.vibrate(100);
+//                }
+//                else if (prev_power != 0 && power == 0){
+//                    v.vibrate(100);
+//                }
 
                 prev_power = power;
 
@@ -211,7 +211,8 @@ public class ManualControlActivity extends FragmentActivity implements SeekBar.O
                 case Constants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
-                    // String readMessage = new String(readBuf, 0, msg.arg1);
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
