@@ -111,6 +111,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int JOURNEY_PAUSED = 3;
     private static final int JOURNEY_FINISHED = 5;
     private static final int PRE_JOURNEY = 6;
+    private static final int MANUAL_CONTROL = 7;
 
     private List<LatLng> journeyWaypoints;
     private int waypointTracker = 0;
@@ -160,6 +161,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         View returnLocation = findViewById(R.id.return_location);
         View mainBar = findViewById(R.id.main_bar);
         View dst = findViewById(R.id.dst);
+        StringBuilder sb;
         switch (view.getId()) {
 
             case R.id.dst:
@@ -185,10 +187,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivityForResult(manualIntent, MANUAL_CODE);
                 if (journeyState == STARTED_JOURNEY) {
                     journeyState = JOURNEY_PAUSED;
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(journeyState);
-                    sendMessage(sb.toString());
                 }
+                sb = new StringBuilder();
+                sb.append(MANUAL_CONTROL);
+                sendMessage(sb.toString());
                 break;
             case R.id.yes:
                 beginJourney.setVisibility(View.GONE);
@@ -206,7 +208,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 endMarker.remove();
                 beginJourney.setVisibility(View.GONE);
                 journeyState = NO_JOURNEY;
-                StringBuilder sb = new StringBuilder();
+                sb = new StringBuilder();
                 sb.append(journeyState);
                 sendMessage(sb.toString());
                 showButtons = !showButtons;
