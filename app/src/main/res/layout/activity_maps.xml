@@ -115,6 +115,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp"
         android:orientation="horizontal"
+        android:visibility="invisible"
         android:background="@drawable/journey_shape">
 
         <TextView android:id="@+id/message"

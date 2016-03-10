@@ -109,9 +109,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int NO_JOURNEY = 2;
     private static final int JOURNEY_PAUSED = 3;
     private static final int JOURNEY_RESUMED = 4;
-    private static final int JOURNEY_FINISHED = 4;
-
-
+    private static final int JOURNEY_FINISHED = 5;
+    private static final int PRE_JOURNEY = 6;
 
     /**
      * String buffer for outgoing messages
@@ -154,8 +153,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     public void onBtnClicked(View view) {
-
+        View beginJourney = findViewById(R.id.start_journey);
+        View returnLocation = findViewById(R.id.return_location);
+        View mainBar = findViewById(R.id.main_bar);
+        View dst = findViewById(R.id.dst);
         switch (view.getId()) {
+
             case R.id.dst:
                 Intent intent = new Intent(this, DirectionsActivity.class);
                 Bundle extras = new Bundle();
@@ -177,8 +180,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Intent manualIntent = new Intent(this, ManualControlActivity.class);
                 startActivityForResult(manualIntent, MANUAL_CODE);
                 break;
+            case R.id.yes:
+                beginJourney.setVisibility(View.GONE);
+                journeyState = STARTED_JOURNEY;
+                showButtons = !showButtons;
+                mainBar.animate().translationY(-mainBar.getHeight()*2);
+                dst.animate().alpha(0.0f);
+                returnLocation.animate().alpha(0.0f);
+                break;
+            case R.id.no:
+                for (int i = 0; i < polylines.size(); i++ ) {
+                    polylines.get(i).remove();
+                }
+                endMarker.remove();
+                beginJourney.setVisibility(View.GONE);
+                journeyState = NO_JOURNEY;
+                showButtons = !showButtons;
+                mainBar.animate().translationY(-mainBar.getHeight()*2);
+                dst.animate().alpha(0.0f);
+                returnLocation.animate().alpha(0.0f);
+                break;
         }
     }
+
 
     /**
      * Sends a message.
@@ -233,6 +257,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .waypoints(startMarker.getPosition(), destPos)
                             .build();
                     routing.execute();
+                    View mainBar = findViewById(R.id.main_bar);
+                    View dst = findViewById(R.id.dst);
+                    View returnLocation = findViewById(R.id.return_location);
+                    mainBar.setVisibility(View.GONE);
+                    dst.setVisibility(View.GONE);
+                    returnLocation.setVisibility(View.GONE);
+                    journeyState = PRE_JOURNEY;
                     break;
                 case BlUETOOTH_CODE:
                      if (mBound){
@@ -391,15 +422,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .zIndex(1));
             polylines.add(polyline);
 
-            for (int j = 0; j < points.size(); j++ ) {
-                Circle circle = googleMap.addCircle(new CircleOptions()
-                        .center(points.get(j))
-                        .radius(0.3)
-                        .fillColor(Color.DKGRAY)
-                        .strokeColor(Color.DKGRAY)
-                        .zIndex(2));
-                circles.add(circle);
-            }
+//            for (int j = 0; j < points.size(); j++ ) {
+//                Circle circle = googleMap.addCircle(new CircleOptions()
+//                        .center(points.get(j))
+//                        .radius(0.3)
+//                        .fillColor(Color.DKGRAY)
+//                        .strokeColor(Color.DKGRAY)
+//                        .zIndex(2));
+//                circles.add(circle);
+//            }
 
             Toast.makeText(getApplicationContext(), "Distance: " + route.get(i).getDistanceText() + " Duration: " + route.get(i).getDurationText(), Toast.LENGTH_LONG).show();
         }
@@ -407,13 +438,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         endMarker = googleMap.addMarker(new MarkerOptions().position(destPos)
                 .title("Destination")
                 .icon(BitmapDescriptorFactory.defaultMarker()));
+        View beginJourney = findViewById(R.id.start_journey);
+        beginJourney.animate().translationY(beginJourney.getHeight()*5);
+        showButtons = !showButtons;
     }
 
     @Override
     public void onRoutingFailure() {
         // The Routing request failed
         progressDialog.dismiss();
-        Toast.makeText(this,"Something went wrong, Try again", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Something went wrong, Try again", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -442,20 +476,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 View beginJourney = findViewById(R.id.start_journey);
 
                 if (showButtons){
-                    mainBar.setVisibility(mainBar.VISIBLE);
-                    mainBar.animate().translationY(0);
-                    beginJourney.setVisibility(mainBar.VISIBLE);
-                    beginJourney.animate().translationY(0);
-                    dst.animate().alpha(1.0f);
-                    returnLocation.animate().alpha(1.0f);
+
+                    if (journeyState == PRE_JOURNEY || journeyState == JOURNEY_PAUSED) {
+                        beginJourney.setVisibility(beginJourney.VISIBLE);
+                        beginJourney.animate().translationY(0);
+                    }
+                    else {
+                        mainBar.setVisibility(mainBar.VISIBLE);
+                        mainBar.animate().translationY(0);
+                        dst.setVisibility(View.VISIBLE);
+                        returnLocation.setVisibility(View.VISIBLE);
+                        dst.animate().alpha(1.0f);
+                        returnLocation.animate().alpha(1.0f);
+                    }
+
                     showButtons = !showButtons;
                 } else {
-                    mainBar.setVisibility(mainBar.VISIBLE);
-                    mainBar.animate().translationY(-mainBar.getHeight()*2);
-                    beginJourney.setVisibility(mainBar.VISIBLE);
-                    beginJourney.animate().translationY(beginJourney.getHeight()*5);
-                    dst.animate().alpha(0.0f);
-                    returnLocation.animate().alpha(0.0f);
+                    if (journeyState == PRE_JOURNEY || journeyState == JOURNEY_PAUSED) {
+                        beginJourney.setVisibility(beginJourney.VISIBLE);
+                        beginJourney.animate().translationY(beginJourney.getHeight()*5);
+                    }
+                    else {
+                        mainBar.setVisibility(mainBar.VISIBLE);
+                        mainBar.animate().translationY(-mainBar.getHeight()*2);
+                        dst.setVisibility(View.VISIBLE);
+                        returnLocation.setVisibility(View.VISIBLE);
+                        dst.animate().alpha(0.0f);
+                        returnLocation.animate().alpha(0.0f);
+                    }
                     showButtons = !showButtons;
                 }
             }
