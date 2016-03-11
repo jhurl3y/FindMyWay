@@ -320,6 +320,7 @@ public class DataTransmissionService extends Service {
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
         bundle.putString(Constants.TOAST, "Device connection was lost");
+        bundle.putInt("BT", 0);
         msg.setData(bundle);
         mHandler.sendMessage(msg);
 

@@ -109,9 +109,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int STARTED_JOURNEY = 1;
     private static final int NO_JOURNEY = 2;
     private static final int JOURNEY_PAUSED = 3;
-    private static final int JOURNEY_FINISHED = 5;
-    private static final int PRE_JOURNEY = 6;
-    private static final int MANUAL_CONTROL = 7;
+    private static final int JOURNEY_FINISHED = 4;
+    private static final int PRE_JOURNEY = 5;
+    private static final int MANUAL_CONTROL = 6;
 
     private List<LatLng> journeyWaypoints;
     private int waypointTracker = 0;
@@ -180,7 +180,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case R.id.bluetooth:
                 Intent serverIntent = new Intent(this, BluetoothActivity.class);
                 startActivityForResult(serverIntent, BlUETOOTH_CODE);
-
                 break;
             case R.id.manual:
                 Intent manualIntent = new Intent(this, ManualControlActivity.class);
@@ -209,7 +208,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 beginJourney.setVisibility(View.GONE);
                 journeyState = NO_JOURNEY;
                 sb = new StringBuilder();
-                sb.append(journeyState);
+                sb.append(journeyState + ";");
                 sendMessage(sb.toString());
                 showButtons = !showButtons;
                 mainBar.animate().translationY(-mainBar.getHeight()*2);
@@ -291,7 +290,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     returnLocation.setVisibility(View.GONE);
                     journeyState = PRE_JOURNEY;
                     StringBuilder sb = new StringBuilder();
-                    sb.append(journeyState);
+                    sb.append(journeyState + ";");
                     sendMessage(sb.toString());
                     break;
                 case BlUETOOTH_CODE:
@@ -310,6 +309,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         else {
             if (requestCode == MANUAL_CODE & journeyState == JOURNEY_PAUSED){
+                if (dtService == null || mBound == false){
+                    journeyState = NO_JOURNEY;
+                    return;
+                }
+
+                if (dtService.getmHandler() == null){
+                    journeyState = NO_JOURNEY;
+                    return;
+                }
+
+                if (dtService.getState() != DataTransmissionService.STATE_CONNECTED) {
+                    journeyState = NO_JOURNEY;
+                    return;
+                }
                 mainBar.setVisibility(View.GONE);
                 dst.setVisibility(View.GONE);
                 returnLocation.setVisibility(View.GONE);
@@ -383,6 +396,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                     break;
                 case Constants.MESSAGE_TOAST:
+                    if (msg.getData().getInt("BT") == 0){
+                        journeyState = NO_JOURNEY;
+                        updateConnectionStatus(DataTransmissionService.STATE_NONE);
+                    }
                     Toast.makeText(getApplicationContext(), msg.getData().getString(Constants.TOAST), Toast.LENGTH_SHORT).show();
                     break;
             }
@@ -497,13 +514,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void sendWaypoints(){
         StringBuilder sb = new StringBuilder();
-        sb.append(journeyState);
-        sb.append("\n");
+        sb.append(journeyState + ";");
         for (int i = waypointTracker; i < waypointTracker + 2; i++)
         {
             LatLng l = journeyWaypoints.get(i);
-            sb.append(" " + l.latitude + " " + l.longitude);
-            sb.append("\n");
+            sb.append(l.latitude + " " + l.longitude);
+            if (i != waypointTracker + 1) {
+                sb.append(", ");
+            }
         }
 
         sendMessage(sb.toString());

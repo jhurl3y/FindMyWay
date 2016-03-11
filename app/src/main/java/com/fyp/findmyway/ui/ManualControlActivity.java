@@ -92,10 +92,10 @@ public class ManualControlActivity extends FragmentActivity implements SeekBar.O
 
                 if (angle != joystickAngle) {
                     if (power == 0){
-                        sendMessage(String.valueOf(angle) + " " + String.valueOf(power));
+                        sendMessage("6; " + String.valueOf(angle) + " " + String.valueOf(power));
                     }
                     else {
-                        sendMessage(String.valueOf(angle) + " " + String.valueOf(speed));
+                        sendMessage("6; " + String.valueOf(angle) + " " + String.valueOf(speed));
                     }
                     joystickAngle = angle;
                 }
