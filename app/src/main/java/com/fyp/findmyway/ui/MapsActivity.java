@@ -387,7 +387,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 case Constants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
-                    // String readMessage = new String(readBuf, 0, msg.arg1);
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    if (readMessage == "Finished"){
+                        waypointTracker++;
+                        sendWaypoints();
+                    }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
@@ -514,16 +518,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void sendWaypoints(){
         StringBuilder sb = new StringBuilder();
-        sb.append(journeyState + ";");
-        for (int i = waypointTracker; i < waypointTracker + 2; i++)
-        {
-            LatLng l = journeyWaypoints.get(i);
-            sb.append(l.latitude + " " + l.longitude);
-            if (i != waypointTracker + 1) {
-                sb.append(", ");
+        if (waypointTracker == journeyWaypoints.size() - 1){
+            journeyState = JOURNEY_FINISHED;
+            sb.append(journeyState + ";");
+            Toast.makeText(this, "Journey finished! At destination!", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            sb.append(journeyState + ";");
+            for (int i = waypointTracker; i < waypointTracker + 2; i++)
+            {
+                LatLng l = journeyWaypoints.get(i);
+                sb.append(l.latitude + " " + l.longitude);
+                if (i != waypointTracker + 1) {
+                    sb.append(", ");
+                }
             }
         }
-
         sendMessage(sb.toString());
     }
 
