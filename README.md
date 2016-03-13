@@ -13,4 +13,8 @@ The Android Application communicates with a Bluetooth server running on a Raspbe
 
 A lot of functionality is offered in the app. The user can specify a GPS point to travel to and manual control the system via a joystick interface. See screenshots below of app functionality.
 
-![Image](https://github.com/jhurl3y/FindMyWay/tree/master/screenshots/1.jpg)
+![Alt text](/screenshots/1.jpg?raw=true "Optional Title")
+![Alt text](/screenshots/2.jpg?raw=true "Optional Title")
+![Alt text](/screenshots/3.jpg?raw=true "Optional Title")
+![Alt text](/screenshots/4.jpg?raw=true "Optional Title")
+![Alt text](/screenshots/5.jpg?raw=true "Optional Title")
