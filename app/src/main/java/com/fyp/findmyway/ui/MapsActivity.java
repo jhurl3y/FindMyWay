@@ -323,6 +323,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     journeyState = NO_JOURNEY;
                     return;
                 }
+                dtService.setmHandler(mHandler);
                 mainBar.setVisibility(View.GONE);
                 dst.setVisibility(View.GONE);
                 returnLocation.setVisibility(View.GONE);
@@ -388,9 +389,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
-                    if (readMessage == "Finished"){
-                        waypointTracker++;
+                    Log.e(TAG, "Message: " + readMessage);
+                    if (readMessage.equals("Finished")){
+                        if (waypointTracker == journeyWaypoints.size() - 1){
+                            Toast.makeText(getApplicationContext(), "Journey finished! At destination!", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Toast.makeText(getApplicationContext(), waypointTracker + 1 + "/" + journeyWaypoints.size() + " complete", Toast.LENGTH_SHORT).show();
+                        }
                         sendWaypoints();
+                        waypointTracker++;
                     }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
@@ -399,6 +407,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Toast.makeText(getApplicationContext(), getString(R.string.toast_connected_to) + " "
                             + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                     break;
+
                 case Constants.MESSAGE_TOAST:
                     if (msg.getData().getInt("BT") == 0){
                         journeyState = NO_JOURNEY;
@@ -464,7 +473,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (int i = 0; i < route.size(); i++) {
 
             journeyWaypoints = route.get(i).getPoints();
-
+            waypointTracker = 0;
             Polyline polyline = googleMap.addPolyline(new PolylineOptions()
                     .addAll(journeyWaypoints)
                     .width(10)
@@ -520,27 +529,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         StringBuilder sb = new StringBuilder();
         if (waypointTracker == journeyWaypoints.size() - 1){
             journeyState = JOURNEY_FINISHED;
-            sb.append(journeyState + ";");
-            Toast.makeText(this, "Journey finished! At destination!", Toast.LENGTH_SHORT).show();
+            //sb.append(journeyState + ";");
+            //sendMessage(sb.toString());
         }
         else{
             sb.append(journeyState + ";");
-            for (int i = waypointTracker; i < waypointTracker + 2; i++)
-            {
+            for (int i = waypointTracker; i < waypointTracker + 2; i++) {
                 LatLng l = journeyWaypoints.get(i);
-                sb.append(l.latitude + " " + l.longitude);
-                if (i != waypointTracker + 1) {
-                    sb.append(", ");
-                }
+                sb.append(l.latitude + " " + l.longitude + " ");
             }
+            sendMessage(sb.toString());
         }
-        sendMessage(sb.toString());
-    }
-
-    public void waypointReached(String message){
-        // if ack ok
-        // waypointTracker++;
-        // sendWaypoints();
+//        sendMessage(sb.toString());
     }
 
     protected void createLocationRequest() {
