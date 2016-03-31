@@ -98,6 +98,24 @@
         style="?android:attr/textAppearanceMedium"
         />
 
+    <Switch
+        android:id="@+id/mySwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/slider"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="35dp" />
+
+    <TextView
+        android:id="@+id/switchStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/mySwitch"
+        android:layout_marginTop="20dp"
+        android:text="Manual"
+        style="?android:attr/textAppearanceMedium"/>
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"

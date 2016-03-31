@@ -11,6 +11,8 @@ import android.os.Message;
 import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.SeekBar;
@@ -25,8 +27,10 @@ import com.fyp.findmyway.views.JoystickView;
 import com.fyp.findmyway.views.JoystickView.OnJoystickMoveListener;
 
 
-public class ManualControlActivity extends FragmentActivity implements SeekBar.OnSeekBarChangeListener {
+public class ManualControlActivity extends FragmentActivity implements SeekBar.OnSeekBarChangeListener, CompoundButton.OnCheckedChangeListener {
 
+    private TextView switchStatus;
+    private Switch mySwitch;
     private TextView angleTextView;
     private TextView powerTextView;
     private TextView speedTextView;
@@ -71,6 +75,14 @@ public class ManualControlActivity extends FragmentActivity implements SeekBar.O
         connectionStat = (TextView) findViewById(R.id.connection_stat);
         directionTextView.setText(R.string.center_lab);
         v = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+
+        switchStatus = (TextView) findViewById(R.id.switchStatus);
+        mySwitch = (Switch) findViewById(R.id.mySwitch);
+
+        //set the switch to ON
+        mySwitch.setChecked(false);
+        //attach a listener to check for changes in state
+        mySwitch.setOnCheckedChangeListener(this);
     }
 
     public void setupJoystick(){
@@ -264,6 +276,18 @@ public class ManualControlActivity extends FragmentActivity implements SeekBar.O
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView,
+                                 boolean isChecked) {
+
+        if(isChecked){
+            switchStatus.setText("Autopilot");
+        }else{
+            switchStatus.setText("Manual");
+        }
 
     }
 }
