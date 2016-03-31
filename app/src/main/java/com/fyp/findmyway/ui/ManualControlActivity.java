@@ -291,7 +291,7 @@ public class ManualControlActivity extends FragmentActivity implements SeekBar.O
             switchStatus.setText("Autopilot");
         }else{
             autopilot = false;
-            sendMessage("6;");
+            sendMessage("6; " + String.valueOf(0) + " " + String.valueOf(0));
             switchStatus.setText("Manual");
         }
 
