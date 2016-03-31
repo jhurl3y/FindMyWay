@@ -56,6 +56,7 @@ public class ManualControlActivity extends FragmentActivity implements SeekBar.O
     private int speed = 0;
 
     TextView connectionStat = null;
+    private Boolean autopilot = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,11 +104,12 @@ public class ManualControlActivity extends FragmentActivity implements SeekBar.O
                 prev_power = power;
 
                 if (angle != joystickAngle) {
-                    if (power == 0){
-                        sendMessage("6; " + String.valueOf(angle) + " " + String.valueOf(power));
-                    }
-                    else {
-                        sendMessage("6; " + String.valueOf(angle) + " " + String.valueOf(speed));
+                    if (!autopilot) {
+                        if (power == 0) {
+                            sendMessage("6; " + String.valueOf(angle) + " " + String.valueOf(power));
+                        } else {
+                            sendMessage("6; " + String.valueOf(angle) + " " + String.valueOf(speed));
+                        }
                     }
                     joystickAngle = angle;
                 }
@@ -284,8 +286,12 @@ public class ManualControlActivity extends FragmentActivity implements SeekBar.O
                                  boolean isChecked) {
 
         if(isChecked){
+            autopilot = true;
+            sendMessage("7;");
             switchStatus.setText("Autopilot");
         }else{
+            autopilot = false;
+            sendMessage("6;");
             switchStatus.setText("Manual");
         }
 
