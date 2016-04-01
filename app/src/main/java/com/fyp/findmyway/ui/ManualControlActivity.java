@@ -40,8 +40,6 @@ public class ManualControlActivity extends FragmentActivity implements SeekBar.O
     private SeekBar seekBar;
     DataTransmissionService mService;
     boolean mBound = false;
-    private Vibrator v;
-    private int prev_power;
 
     /**
      * Local Bluetooth adapter
@@ -75,7 +73,6 @@ public class ManualControlActivity extends FragmentActivity implements SeekBar.O
         setupJoystick();
         connectionStat = (TextView) findViewById(R.id.connection_stat);
         directionTextView.setText(R.string.center_lab);
-        v = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
 
         switchStatus = (TextView) findViewById(R.id.switchStatus);
         mySwitch = (Switch) findViewById(R.id.mySwitch);
@@ -93,15 +90,6 @@ public class ManualControlActivity extends FragmentActivity implements SeekBar.O
             @Override
             public void onValueChanged(int angle, int power, int direction) {
                 // angleTextView.setText("Angle: " + String.valueOf(angle) + "°");
-
-//                if (prev_power == 0) {
-//                    v.vibrate(100);
-//                }
-//                else if (prev_power != 0 && power == 0){
-//                    v.vibrate(100);
-//                }
-
-                prev_power = power;
 
                 if (angle != joystickAngle) {
                     if (!autopilot) {

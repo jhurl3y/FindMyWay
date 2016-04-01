@@ -251,30 +251,4 @@ public class BluetoothActivity extends Activity {
         }
     };
 
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (resultCode == RESULT_OK && data != null) {
-//            switch (requestCode) {
-//                case REQUEST_ENABLE_BT:
-//                    // Get a set of currently paired devices
-//                    Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
-//
-//                    // If there are paired devices, add each one to the ArrayAdapter
-//                    if (pairedDevices.size() > 0) {
-//                        findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
-//                        for (BluetoothDevice device : pairedDevices) {
-//                            pairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-//                        }
-//                    } else {
-//                        String noDevices = getResources().getText(R.string.none_paired).toString();
-//                        pairedDevicesArrayAdapter.add(noDevices);
-//                    }
-//                    break;
-//
-//            }
-//        }
-//    }
-
 }

@@ -717,11 +717,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
-        // Unbind from the service
-//        if (mBound) {
-//            unbindService(mConnection);
-//            mBound = false;
-//        }
     }
 
     @Override
@@ -755,14 +750,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        if (dtService != null && dtService.getmHandler() != null) {
-//            dtService.stop();
-//        }
+
         if (mBound) {
             unbindService(mConnection);
-            //mBound = false;
         }
-
     }
 
     @Override
